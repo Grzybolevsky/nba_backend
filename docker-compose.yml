@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  api:
+    container_name: api
+    build: .
+    ports:
+      - "8080:8080"
+    links:
+      - postgresdb
+  postgresdb:
+    container_name: postgresdb
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
