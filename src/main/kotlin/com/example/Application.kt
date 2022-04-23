@@ -1,14 +1,15 @@
 package com.example
 
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URL
+
 import com.example.model.Player
 import org.json.JSONArray
 import org.json.JSONObject
 import org.springframework.boot.Banner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
 
 @SpringBootApplication
 class Application
@@ -23,31 +24,36 @@ fun getDataFromBalldontile(urlString: String): JSONArray {
             dataString += line
         }
     }
-    var rawJSON = JSONObject(dataString)
-    var arrayFromJSON: JSONArray = rawJSON.getJSONArray("data")
-    return arrayFromJSON
+    val rawJSON = JSONObject(dataString)
+    return rawJSON.getJSONArray("data")
 }
+
 fun main(args: Array<String>) {
-    val playersURL: String = "https://www.balldontlie.io/api/v1/players"
-    var playersData: JSONArray = getDataFromBalldontile(playersURL)
+    val playersURL = "https://www.balldontlie.io/api/v1/players"
+    val playersData: JSONArray = getDataFromBalldontile(playersURL)
 
-    var gamesURL: String = "https://www.balldontlie.io/api/v1/games"
-    var gamesData: JSONArray = getDataFromBalldontile(gamesURL)
+    val gamesURL = "https://www.balldontlie.io/api/v1/games"
+    val gamesData: JSONArray = getDataFromBalldontile(gamesURL)
 
-    var players: ArrayList<Player> = ArrayList<Player>()
+    val players: ArrayList<Player> = ArrayList()
     for (i in 0 until playersData.length()) {
-        var tempPlayerJSON: JSONObject = playersData.getJSONObject(i)
-        var tempPlayer: Player = Player(tempPlayerJSON["id"] as Int, tempPlayerJSON["first_name"] as String, tempPlayerJSON["last_name"] as String, tempPlayerJSON["position"] as String)
+        val tempPlayerJSON: JSONObject = playersData.getJSONObject(i)
+        val tempPlayer = Player(
+            tempPlayerJSON["id"] as Int,
+            tempPlayerJSON["first_name"] as String,
+            tempPlayerJSON["last_name"] as String,
+            tempPlayerJSON["position"] as String
+        )
         players.add(tempPlayer)
     }
 
-    var player = players.get(0)
+    val player = players[0]
     println("===============================")
     println("EXAMPLE FIRST PLAYER: ")
     println(player.firstName + " " + player.lastName + " " + player.position)
     println("===============================")
 
-    var game = gamesData.get(0)
+    val game = gamesData[0]
     println("===============================")
     println("EXAMPLE FIRST GAME: ")
     println(game)
