@@ -1,14 +1,15 @@
 package com.example
 
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URL
+
 import com.example.model.Player
 import org.json.JSONArray
 import org.json.JSONObject
 import org.springframework.boot.Banner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
 
 @SpringBootApplication
 class Application
@@ -27,6 +28,7 @@ fun getDataFromBalldontile(urlString: String): JSONArray {
     var arrayFromJSON: JSONArray = rawJSON.getJSONArray("data")
     return arrayFromJSON
 }
+
 fun main(args: Array<String>) {
     val playersURL: String = "https://www.balldontlie.io/api/v1/players"
     var playersData: JSONArray = getDataFromBalldontile(playersURL)
@@ -37,7 +39,12 @@ fun main(args: Array<String>) {
     var players: ArrayList<Player> = ArrayList<Player>()
     for (i in 0 until playersData.length()) {
         var tempPlayerJSON: JSONObject = playersData.getJSONObject(i)
-        var tempPlayer: Player = Player(tempPlayerJSON["id"] as Int, tempPlayerJSON["first_name"] as String, tempPlayerJSON["last_name"] as String, tempPlayerJSON["position"] as String)
+        var tempPlayer: Player = Player(
+            tempPlayerJSON["id"] as Int,
+            tempPlayerJSON["first_name"] as String,
+            tempPlayerJSON["last_name"] as String,
+            tempPlayerJSON["position"] as String
+        )
         players.add(tempPlayer)
     }
 

@@ -10,7 +10,7 @@ class HtmlController {
 
     @GetMapping("/")
     fun blog(model: Model): String {
-        model["title"] = "Blog 2"
+        model["title"] = "Blog"
         return "blog"
     }
 }
