@@ -17,28 +17,29 @@ class Application
 fun getDataFromBalldontile(urlString: String): JSONArray {
     val url = URL(urlString)
     val connection = url.openConnection()
-    var dataString = ""
+    var dataString: String = ""
     BufferedReader(InputStreamReader(connection.getInputStream())).use { inp ->
         var line: String?
         while (inp.readLine().also { line = it } != null) {
             dataString += line
         }
     }
-    val rawJSON = JSONObject(dataString)
-    return rawJSON.getJSONArray("data")
+    var rawJSON = JSONObject(dataString)
+    var arrayFromJSON: JSONArray = rawJSON.getJSONArray("data")
+    return arrayFromJSON
 }
 
 fun main(args: Array<String>) {
-    val playersURL = "https://www.balldontlie.io/api/v1/players"
-    val playersData: JSONArray = getDataFromBalldontile(playersURL)
+    val playersURL: String = "https://www.balldontlie.io/api/v1/players"
+    var playersData: JSONArray = getDataFromBalldontile(playersURL)
 
-    val gamesURL = "https://www.balldontlie.io/api/v1/games"
-    val gamesData: JSONArray = getDataFromBalldontile(gamesURL)
+    var gamesURL: String = "https://www.balldontlie.io/api/v1/games"
+    var gamesData: JSONArray = getDataFromBalldontile(gamesURL)
 
-    val players: ArrayList<Player> = ArrayList()
+    var players: ArrayList<Player> = ArrayList<Player>()
     for (i in 0 until playersData.length()) {
-        val tempPlayerJSON: JSONObject = playersData.getJSONObject(i)
-        val tempPlayer = Player(
+        var tempPlayerJSON: JSONObject = playersData.getJSONObject(i)
+        var tempPlayer: Player = Player(
             tempPlayerJSON["id"] as Int,
             tempPlayerJSON["first_name"] as String,
             tempPlayerJSON["last_name"] as String,
@@ -47,13 +48,13 @@ fun main(args: Array<String>) {
         players.add(tempPlayer)
     }
 
-    val player = players[0]
+    var player = players.get(0)
     println("===============================")
     println("EXAMPLE FIRST PLAYER: ")
     println(player.firstName + " " + player.lastName + " " + player.position)
     println("===============================")
 
-    val game = gamesData[0]
+    var game = gamesData.get(0)
     println("===============================")
     println("EXAMPLE FIRST GAME: ")
     println(game)
