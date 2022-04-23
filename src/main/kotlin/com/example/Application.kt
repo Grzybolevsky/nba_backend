@@ -17,7 +17,7 @@ class Application
 fun getDataFromBalldontile(urlString: String): JSONArray {
     val url = URL(urlString)
     val connection = url.openConnection()
-    var dataString: String = ""
+    var dataString = ""
     BufferedReader(InputStreamReader(connection.getInputStream())).use { inp ->
         var line: String?
         while (inp.readLine().also { line = it } != null) {
