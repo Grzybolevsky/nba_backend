@@ -1,43 +1,44 @@
 package com.example
 
+import com.example.model.Player
+import com.example.plugins.configureHTTP
+import com.example.plugins.configureMonitoring
+import com.example.plugins.configureRouting
+import com.example.plugins.configureSecurity
+import com.example.plugins.configureSerialization
+import com.example.plugins.configureSockets
+import com.example.plugins.configureTemplating
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 
-import com.example.model.Player
-import org.json.JSONArray
-import org.json.JSONObject
-import org.springframework.boot.Banner
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-
-@SpringBootApplication
-class Application
-
 fun getDataFromBalldontile(urlString: String): JSONArray {
     val url = URL(urlString)
     val connection = url.openConnection()
-    var dataString: String = ""
+    var dataString = ""
     BufferedReader(InputStreamReader(connection.getInputStream())).use { inp ->
         var line: String?
         while (inp.readLine().also { line = it } != null) {
             dataString += line
         }
     }
-    val rawJSON = JSONObject(dataString)
-    return rawJSON.getJSONArray("data")
+    return JSONObject(dataString).getJSONArray("data")
 }
 
-fun main(args: Array<String>) {
+fun main() {
     val playersURL = "https://www.balldontlie.io/api/v1/players"
-    val playersData: JSONArray = getDataFromBalldontile(playersURL)
+    val playersData = getDataFromBalldontile(playersURL)
 
     val gamesURL = "https://www.balldontlie.io/api/v1/games"
-    val gamesData: JSONArray = getDataFromBalldontile(gamesURL)
+    val gamesData = getDataFromBalldontile(gamesURL)
 
-    val players: ArrayList<Player> = ArrayList()
+    val players = ArrayList<Player>()
     for (i in 0 until playersData.length()) {
-        val tempPlayerJSON: JSONObject = playersData.getJSONObject(i)
+        val tempPlayerJSON = playersData.getJSONObject(i)
         val tempPlayer = Player(
             tempPlayerJSON["id"] as Int,
             tempPlayerJSON["first_name"] as String,
@@ -47,19 +48,23 @@ fun main(args: Array<String>) {
         players.add(tempPlayer)
     }
 
-    val player = players[0]
     println("===============================")
     println("EXAMPLE FIRST PLAYER: ")
-    println(player.firstName + " " + player.lastName + " " + player.position)
+    println(players[0].firstName + " " + players[0].lastName + " " + players[0].position)
     println("===============================")
 
-    val game = gamesData[0]
     println("===============================")
     println("EXAMPLE FIRST GAME: ")
-    println(game)
+    println(gamesData[0])
     println("===============================")
 
-    runApplication<Application>(*args) {
-        setBannerMode(Banner.Mode.OFF)
-    }
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+        configureRouting()
+        configureSecurity()
+        configureMonitoring()
+        configureTemplating()
+        configureSockets()
+        configureSerialization()
+        configureHTTP()
+    }.start(wait = true)
 }
