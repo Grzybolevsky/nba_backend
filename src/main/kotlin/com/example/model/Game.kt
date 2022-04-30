@@ -1,6 +1,6 @@
 package com.example.model
 
-data class Game (
+data class Game(
     val id: Int,
     val date: String,
     val homeTeam: Team,
