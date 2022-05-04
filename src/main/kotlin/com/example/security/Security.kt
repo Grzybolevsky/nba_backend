@@ -1,14 +1,13 @@
-package com.example.plugins
+package com.example.security
 
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
-import io.ktor.http.HttpMethod
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import kotlin.collections.set
 
 fun Application.configureSecurity() {
 
@@ -29,31 +28,27 @@ fun Application.configureSecurity() {
             client = HttpClient(Apache)
         }
     }
-    data class MySession(val count: Int = 0)
     install(Sessions) {
-        cookie<MySession>("MY_SESSION") {
-            cookie.extensions["SameSite"] = "lax"
+        cookie<UserSession>("user_session", SessionStorageMemory()) {
+            cookie.path = "/"
+            cookie.maxAgeInSeconds = 10
         }
     }
 
     routing {
         authenticate("auth-oauth-google") {
-            get("login") {
+
+            get("/login") {
                 call.respondRedirect("/callback")
             }
 
             get("/callback") {
                 val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
-                call.sessions.set(UserSession(principal?.accessToken.toString()))
-                call.respondRedirect("/hello")
+                call.sessions.set(UserSession(principal?.accessToken.toString(), 0))
+                call.respondRedirect("/")
             }
-        }
-        get("/session/increment") {
-            val session = call.sessions.get<MySession>() ?: MySession()
-            call.sessions.set(session.copy(count = session.count + 1))
-            call.respondText("Counter is ${session.count}. Refresh to increment.")
         }
     }
 }
 
-class UserSession(accessToken: String)
+data class UserSession(val id: String, val count: Int)
