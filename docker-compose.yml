@@ -6,11 +6,16 @@ services:
     ports:
       - "8080:8080"
     links:
-      - postgresdb
-  postgresdb:
-    container_name: postgresdb
+      - db
+  db:
+    container_name: db
     image: postgres
     ports:
       - "5432:5432"
     environment:
+      POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+    volumes:
+      - db_volume:/db/
+volumes:
+  db_volume:
