@@ -5,6 +5,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.simpleRoute() {
+
     get("/") {
         call.respondText("Hello World")
     }
