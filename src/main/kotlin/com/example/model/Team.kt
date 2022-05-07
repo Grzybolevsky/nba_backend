@@ -1,14 +1,16 @@
 package com.example.model
 
-import org.jetbrains.exposed.sql.*
+import kotlinx.serialization.json.JsonNames
+import org.jetbrains.exposed.sql.Table
 
+@kotlinx.serialization.Serializable
 data class Team(
     val id: Int,
     val abbreviation: String,
     val city: String,
     val conference: String,
     val division: String,
-    val fullName: String,
+    @JsonNames("full_name") val fullName: String,
     val name: String
 )
 

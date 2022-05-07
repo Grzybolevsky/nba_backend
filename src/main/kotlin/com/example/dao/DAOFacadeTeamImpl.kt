@@ -1,8 +1,11 @@
 package com.example.dao
 
 import com.example.dao.DatabaseFactory.dbQuery
-import com.example.model.*
-import org.jetbrains.exposed.sql.*
+import com.example.model.Team
+import com.example.model.Teams
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 
 class DAOFacadeTeamImpl : DAOFacadeTeam {
     private fun resultRowToArticle(row: ResultRow) = Team(
@@ -19,7 +22,15 @@ class DAOFacadeTeamImpl : DAOFacadeTeam {
         Teams.selectAll().map(::resultRowToArticle)
     }
 
-    override suspend fun addNewTeam(id: Int, abbreviation: String, city: String, conference: String, division: String, fullName: String, name: String): Team? = dbQuery {
+    override suspend fun addNewTeam(
+        id: Int,
+        abbreviation: String,
+        city: String,
+        conference: String,
+        division: String,
+        fullName: String,
+        name: String
+    ): Team? = dbQuery {
         val insertStatement = Teams.insert {
             it[Teams.id] = id
             it[Teams.abbreviation] = abbreviation
