@@ -1,9 +1,6 @@
 package com.example.services.balldontile
 
-import com.example.dao.DAOFacadeGame
-import com.example.dao.DAOFacadeGameImpl
-import com.example.dao.DAOFacadeTeam
-import com.example.dao.DAOFacadeTeamImpl
+import com.example.dao.*
 import com.example.model.Game
 import com.example.model.Player
 import com.example.model.Team
@@ -16,12 +13,24 @@ object BalldontileInfoService {
     private const val API = "https://www.balldontlie.io/api/v1"
     private val format = Json { ignoreUnknownKeys = true }
 
-    fun fetchPlayers(): List<Player> {
-        val playersURL = "$API/players"
+    fun fetchOnePlayersPage(pageNumber: Int): RequestData<List<Player>> {
+        val playersURL = "$API/players?per_page=100&page=$pageNumber"
         val playersDataString = HttpClientService.getFromUrl(playersURL)
-        val playersData: RequestData<List<Player>> = format.decodeFromString(playersDataString)
+        return format.decodeFromString(playersDataString)
+    }
 
-        return playersData.data
+    fun fetchPlayers(): List<Player> {
+        var allPlayers: List<Player>
+        var playersData = fetchOnePlayersPage(1)
+        allPlayers = playersData.data
+        // var pages = playersData.meta.totalPages
+        var pages = 3
+
+        for (pageNumber in 2..pages) {
+            allPlayers += fetchOnePlayersPage(pageNumber).data
+        }
+
+        return allPlayers
     }
 
     private fun fetchOneGamesPage(pageNumber: Int): RequestData<List<Game>> {
@@ -35,7 +44,7 @@ object BalldontileInfoService {
         var gamesData = fetchOneGamesPage(1)
         allGames = gamesData.data
         // var pages = gamesData.meta.totalPages
-        var pages = 10
+        var pages = 3
 
         for (pageNumber in 2..pages) {
             allGames += fetchOneGamesPage(pageNumber).data
@@ -58,6 +67,9 @@ object BalldontileInfoService {
 
         val games = fetchGames()
         val daoGames: DAOFacadeGame = DAOFacadeGameImpl()
+
+        val players = fetchPlayers()
+        val daoPlayers: DAOFacadePlayer = DAOFacadePlayerImpl()
 
         for (team in teams) {
             daoTeams.addNewTeam(
@@ -82,6 +94,19 @@ object BalldontileInfoService {
                 game.period,
                 game.season,
                 game.status
+            )
+        }
+
+        for (player in players) {
+            daoPlayers.addNewPlayer(
+                player.id,
+                player.firstName,
+                player.lastName,
+                player.heightFeet,
+                player.heightInches,
+                player.weightPounds,
+                player.team.id,
+                player.position
             )
         }
     }

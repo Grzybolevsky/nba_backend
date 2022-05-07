@@ -1,6 +1,7 @@
 package com.example.dao
 
 import com.example.model.Games
+import com.example.model.Players
 import com.example.model.Teams
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -18,6 +19,7 @@ object DatabaseFactory {
         transaction(database) {
             SchemaUtils.create(Teams)
             SchemaUtils.create(Games)
+            SchemaUtils.create(Players)
         }
     }
 

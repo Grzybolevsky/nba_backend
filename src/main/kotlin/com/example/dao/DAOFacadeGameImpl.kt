@@ -5,6 +5,7 @@ import com.example.model.Games
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
+import com.example.dao.DatabaseFactory.dbQuery
 
 class DAOFacadeGameImpl : DAOFacadeGame {
 
@@ -20,7 +21,7 @@ class DAOFacadeGameImpl : DAOFacadeGame {
         season = row[Games.season],
         status = row[Games.status],
     )
-    override suspend fun allGames(): List<Game> = DatabaseFactory.dbQuery {
+    override suspend fun allGames(): List<Game> = dbQuery {
         Games.selectAll().map { resultRowToGame(it) }
     }
 
@@ -34,7 +35,7 @@ class DAOFacadeGameImpl : DAOFacadeGame {
         period: Int,
         season: Int,
         status: String
-    ): Game? = DatabaseFactory.dbQuery {
+    ): Game? = dbQuery {
         val insertStatement = Games.insert {
             it[Games.id] = id
             it[Games.date] = date
