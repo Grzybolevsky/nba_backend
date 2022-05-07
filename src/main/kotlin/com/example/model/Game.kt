@@ -2,8 +2,6 @@ package com.example.model
 
 import kotlinx.serialization.json.JsonNames
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.kotlin.datetime.date
-
 
 @kotlinx.serialization.Serializable
 data class Game(
@@ -20,11 +18,11 @@ data class Game(
 
 object Games : Table() {
     val id = integer("id")
-    val date = date("date")
-    val homeTeamId = integer("homeTeamID").uniqueIndex().references(Teams.id)
-    val visitorTeamId = integer("homeTeamID").uniqueIndex().references(Teams.id)
+    val date = varchar("date", 128)
+    val homeTeamId = integer("homeTeamID").references(Teams.id)
+    val visitorTeamId = integer("visitorTeamID").references(Teams.id)
     val homeTeamScore = integer("homeTeamScore")
-    val visitorTeamScore = integer("homeTeamScore")
+    val visitorTeamScore = integer("visitorTeamScore")
     val period = integer("period")
     val season = integer("season")
     val status = varchar("status", 128)

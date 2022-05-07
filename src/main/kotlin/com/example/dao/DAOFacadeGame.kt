@@ -1,21 +1,18 @@
 package com.example.dao
 
 import com.example.model.Game
-import com.example.model.Team
 
 interface DAOFacadeGame {
-    suspend fun allGames(): List<Team>
+    suspend fun allGames(): List<Game>
     suspend fun addNewGame(
         id: Int,
         date: String,
-        homeTeam: Team,
-        visitorTeam: Team,
+        homeTeamId: Int,
+        visitorTeamId: Int,
         homeTeamScore: Int,
         visitorTeamScore: Int,
-        name: String,
         period: Int,
         season: Int,
-        status: Int
+        status: String
     ): Game?
 }
-

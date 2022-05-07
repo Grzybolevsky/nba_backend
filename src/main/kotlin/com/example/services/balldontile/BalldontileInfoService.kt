@@ -1,5 +1,7 @@
 package com.example.services.balldontile
 
+import com.example.dao.DAOFacadeGame
+import com.example.dao.DAOFacadeGameImpl
 import com.example.dao.DAOFacadeTeam
 import com.example.dao.DAOFacadeTeamImpl
 import com.example.model.Game
@@ -22,12 +24,24 @@ object BalldontileInfoService {
         return playersData.data
     }
 
-    private fun fetchGames(): List<Game> {
-        val gamesURL = "$API/games"
+    private fun fetchOneGamesPage(pageNumber: Int): RequestData<List<Game>> {
+        val gamesURL = "$API/games?per_page=100&page=$pageNumber"
         val gamesDataString = HttpClientService.getFromUrl(gamesURL)
-        val gamesData: RequestData<List<Game>> = format.decodeFromString(gamesDataString)
+        return format.decodeFromString(gamesDataString)
+    }
 
-        return gamesData.data
+    private fun fetchGames(): List<Game> {
+        var allGames: List<Game>
+        var gamesData = fetchOneGamesPage(1)
+        allGames = gamesData.data
+        // var pages = gamesData.meta.totalPages
+        var pages = 10
+
+        for (pageNumber in 2..pages) {
+            allGames += fetchOneGamesPage(pageNumber).data
+        }
+
+        return allGames
     }
 
     fun fetchTeams(): List<Team> {
@@ -40,10 +54,13 @@ object BalldontileInfoService {
 
     suspend fun fetchData() {
         val teams = fetchTeams()
-        val dao: DAOFacadeTeam = DAOFacadeTeamImpl()
+        val daoTeams: DAOFacadeTeam = DAOFacadeTeamImpl()
+
+        val games = fetchGames()
+        val daoGames: DAOFacadeGame = DAOFacadeGameImpl()
 
         for (team in teams) {
-            dao.addNewTeam(
+            daoTeams.addNewTeam(
                 team.id,
                 team.abbreviation,
                 team.city,
@@ -51,6 +68,20 @@ object BalldontileInfoService {
                 team.division,
                 team.fullName,
                 team.name
+            )
+        }
+
+        for (game in games) {
+            daoGames.addNewGame(
+                game.id,
+                game.date,
+                game.homeTeam.id,
+                game.visitorTeam.id,
+                game.homeTeamScore,
+                game.visitorTeamScore,
+                game.period,
+                game.season,
+                game.status
             )
         }
     }

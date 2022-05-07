@@ -1,5 +1,6 @@
 package com.example.dao
 
+import com.example.model.Games
 import com.example.model.Teams
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -16,6 +17,7 @@ object DatabaseFactory {
         val database = Database.connect(jdbcURL, driverClassName, user, password)
         transaction(database) {
             SchemaUtils.create(Teams)
+            SchemaUtils.create(Games)
         }
     }
 

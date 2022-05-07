@@ -5,10 +5,11 @@ import com.example.model.Team
 import com.example.model.Teams
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 class DAOFacadeTeamImpl : DAOFacadeTeam {
-    private fun resultRowToArticle(row: ResultRow) = Team(
+    fun resultRowToTeam(row: ResultRow) = Team(
         id = row[Teams.id],
         abbreviation = row[Teams.abbreviation],
         city = row[Teams.city],
@@ -19,7 +20,7 @@ class DAOFacadeTeamImpl : DAOFacadeTeam {
     )
 
     override suspend fun allTeams(): List<Team> = dbQuery {
-        Teams.selectAll().map(::resultRowToArticle)
+        Teams.selectAll().map(::resultRowToTeam)
     }
 
     override suspend fun addNewTeam(
@@ -40,8 +41,16 @@ class DAOFacadeTeamImpl : DAOFacadeTeam {
             it[Teams.fullName] = fullName
             it[Teams.name] = name
         }
-        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToArticle)
+        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToTeam)
     }
+
+    override suspend fun team(id: Int): Team? = dbQuery {
+        Teams
+            .select { Teams.id eq id }
+            .map(::resultRowToTeam)
+            .singleOrNull()
+    }
+
     /*
     val dao: DAOFacadeTeam = DAOFacadeTeamImpl().apply {
         runBlocking {

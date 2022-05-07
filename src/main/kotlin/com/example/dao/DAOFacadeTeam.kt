@@ -13,4 +13,6 @@ interface DAOFacadeTeam {
         fullName: String,
         name: String
     ): Team?
+
+    suspend fun team(id: Int): Team?
 }
