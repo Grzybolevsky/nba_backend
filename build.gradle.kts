@@ -96,7 +96,7 @@ tasks.register<Exec>("buildDocker") {
 tasks.register<Exec>("runDocker") {
     dependsOn("buildDocker")
     workingDir("$projectDir")
-    commandLine("docker", "run", "${project.group}/${project.name}:${project.version}")
+    commandLine("docker", "run", "${project.name}:${project.version}")
 }
 
 testing {

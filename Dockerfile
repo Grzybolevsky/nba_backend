@@ -32,4 +32,4 @@ COPY --from=BUILDER /app/build/lib/* lib/
 COPY --from=BUILDER /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
-ENTRYPOINT jre/bin/java -jar app.jar
+ENTRYPOINT ['jre/bin/java', '-jar', 'app.jar']
