@@ -69,6 +69,36 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+tasks.register<Copy>("copyDependencies") {
+    from(configurations.runtimeClasspath.get())
+    into("$buildDir/lib")
+}
+
+val jar by tasks.getting(Jar::class) {
+    dependsOn("copyDependencies")
+    manifest {
+        attributes["Main-Class"] = "com.example.ApplicationKt"
+        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(" ") {
+            "lib/" + it.name
+        }
+    }
+}
+
+tasks.register<Exec>("buildDocker") {
+    workingDir("$projectDir")
+    commandLine(
+        "docker", "build",
+        "--rm", ".", "-t",
+        "${project.group}/${project.name}:${project.version}"
+    )
+}
+
+tasks.register<Exec>("runDocker") {
+    dependsOn("buildDocker")
+    workingDir("$projectDir")
+    commandLine("docker", "run", "${project.group}/${project.name}:${project.version}")
+}
+
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
@@ -91,7 +121,7 @@ testing {
     }
 }
 
-val integrationImplementation by configurations.getting {
+val integrationImplementation: Configuration by configurations.getting {
     extendsFrom(configurations.testImplementation.get())
 }
 
