@@ -1,8 +1,8 @@
-name: Docker image continuous deployment
+name: Push a Docker image to the hub.
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     tags: ['v*.*.*']
 
 env:
