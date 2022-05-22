@@ -8,6 +8,7 @@ import com.example.services.HttpClientService
 import com.example.services.images.ImageService
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.lang.Thread.sleep
 
 object BalldontileInfoService {
     private const val API = "https://www.balldontlie.io/api/v1"
@@ -26,9 +27,24 @@ object BalldontileInfoService {
     private suspend fun fetchPlayers() {
         val (data, meta) = fetchOnePlayersPage(1)
 
-        data.forEach { storePlayerInDB(it) }
+        daoPlayers.addNewPlayers(data)
         (2..meta.totalPages).forEach { pageNumber ->
-            fetchOnePlayersPage(pageNumber).data.forEach { storePlayerInDB(it) }
+            val players = fetchOnePlayersPage(pageNumber).data
+            fetchImageUrlsForPlayers(players)
+            daoPlayers.addNewPlayers(players)
+            sleep(800)
+        }
+    }
+
+    private fun fetchImageUrlsForPlayers(players: List<Player>) {
+        players.forEach { player ->
+            val found = playersImageIds.find {
+                it.firstName == player.firstName && it.lastName == player.lastName
+            }
+            player.imageUrl = when {
+                found != null -> ImageService.getImageUrlForId(found.personId)
+                else -> ""
+            }
         }
     }
 
@@ -38,27 +54,13 @@ object BalldontileInfoService {
         return format.decodeFromString(playersDataString)
     }
 
-    private suspend fun storePlayerInDB(player: Player) {
-        val playerInfo = playersImageIds.find {
-            it.firstName == player.firstName &&
-                    it.lastName == player.lastName
-        }
-
-        daoPlayers.addNewPlayer(
-            player,
-            when {
-                playerInfo != null -> ImageService.getImageUrlForId(playerInfo.personId)
-                else -> ""
-            }
-        )
-    }
-
     private suspend fun fetchGames() {
         val (data, meta) = fetchOneGamesPage(1)
 
-        data.forEach { storeGameInDB(it) }
+        daoGames.addNewGames(data)
         (2..meta.totalPages).forEach { pageNumber ->
-            fetchOneGamesPage(pageNumber).data.forEach { storeGameInDB(it) }
+            daoGames.addNewGames(fetchOneGamesPage(pageNumber).data)
+            sleep(800)
         }
     }
 
@@ -68,19 +70,11 @@ object BalldontileInfoService {
         return format.decodeFromString(gamesDataString)
     }
 
-    private suspend fun storeGameInDB(game: Game) {
-        daoGames.addNewGame(game)
-    }
-
     private suspend fun fetchTeams() {
         val teamsURL = "$API/teams"
         val teamsDataString = HttpClientService.getFromUrl(teamsURL)
         val teamsData: RequestData<List<Team>> = format.decodeFromString(teamsDataString)
 
-        teamsData.data.forEach { storeTeamInDB(it) }
-    }
-
-    private suspend fun storeTeamInDB(team: Team) {
-        daoTeams.addNewTeam(team)
+        daoTeams.addNewTeams(teamsData.data)
     }
 }

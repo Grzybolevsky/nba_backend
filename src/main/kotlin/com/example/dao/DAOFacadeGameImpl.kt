@@ -1,11 +1,9 @@
 package com.example.dao
 
+import com.example.dao.DatabaseFactory.dbQuery
 import com.example.model.Game
 import com.example.model.Games
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import com.example.dao.DatabaseFactory.dbQuery
+import org.jetbrains.exposed.sql.*
 
 class DAOFacadeGameImpl : DAOFacadeGame {
 
@@ -21,15 +19,18 @@ class DAOFacadeGameImpl : DAOFacadeGame {
         season = row[Games.season],
         status = row[Games.status],
     )
+
     override suspend fun getAllGames(): List<Game> = dbQuery {
         Games.selectAll().map { resultRowToGame(it) }
     }
 
-    override suspend fun getGameById(id: Int): Game {
-        TODO("Not yet implemented")
+    override suspend fun getGameById(id: Int): Game? = dbQuery {
+        Games.select { Games.id eq id }
+            .map { resultRowToGame(it) }
+            .singleOrNull()
     }
 
-    override suspend fun addNewGame(game:Game): Game? = dbQuery {
+    override suspend fun addNewGame(game: Game): Game? = dbQuery {
         val insertStatement = Games.insert {
             it[id] = game.id
             it[date] = game.date
@@ -44,7 +45,17 @@ class DAOFacadeGameImpl : DAOFacadeGame {
         insertStatement.resultedValues?.singleOrNull()?.let { resultRowToGame(it) }
     }
 
-    override suspend fun addNewGames(game: List<Game>) {
-        TODO("Not yet implemented")
+    override suspend fun addNewGames(games: List<Game>) = dbQuery {
+        val insertStatement = Games.batchInsert(games, shouldReturnGeneratedValues = false) {
+            this[Games.id] = it.id
+            this[Games.date] = it.date
+            this[Games.homeTeamId] = it.homeTeam.id
+            this[Games.visitorTeamId] = it.visitorTeam.id
+            this[Games.homeTeamScore] = it.homeTeamScore
+            this[Games.visitorTeamScore] = it.visitorTeamScore
+            this[Games.period] = it.period
+            this[Games.season] = it.season
+            this[Games.status] = it.status
+        }
     }
 }

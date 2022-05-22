@@ -22,7 +22,9 @@ object DatabaseFactory {
     fun init() {
         val database = connect()
         transaction(database) {
-            SchemaUtils.dropDatabase()
+            SchemaUtils.drop(Players)
+            SchemaUtils.drop(Games)
+            SchemaUtils.drop(Teams)
         }
         transaction(database) {
             SchemaUtils.create(Teams)

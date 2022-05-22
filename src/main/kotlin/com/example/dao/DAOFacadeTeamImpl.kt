@@ -3,10 +3,7 @@ package com.example.dao
 import com.example.dao.DatabaseFactory.dbQuery
 import com.example.model.Team
 import com.example.model.Teams
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 
 class DAOFacadeTeamImpl : DAOFacadeTeam {
     private fun resultRowToTeam(row: ResultRow) = Team(
@@ -23,7 +20,13 @@ class DAOFacadeTeamImpl : DAOFacadeTeam {
         Teams.selectAll().map(::resultRowToTeam)
     }
 
-    override suspend fun addNewTeam(team:Team): Team? = dbQuery {
+    override suspend fun getTeamById(id: Int): Team? = dbQuery {
+        Teams.select { Teams.id eq id }
+            .map(::resultRowToTeam)
+            .singleOrNull()
+    }
+
+    override suspend fun addNewTeam(team: Team): Team? = dbQuery {
         val insertStatement = Teams.insert {
             it[id] = team.id
             it[abbreviation] = team.abbreviation
@@ -36,13 +39,15 @@ class DAOFacadeTeamImpl : DAOFacadeTeam {
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToTeam)
     }
 
-    override suspend fun addNewTeams(teams: List<Team>) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getTeamById(id: Int): Team? = dbQuery {
-        Teams.select { Teams.id eq id }
-            .map(::resultRowToTeam)
-            .singleOrNull()
+    override suspend fun addNewTeams(teams: List<Team>) = dbQuery {
+        val insertStatement = Teams.batchInsert(teams, shouldReturnGeneratedValues = false) {
+            this[Teams.id] = it.id
+            this[Teams.abbreviation] = it.abbreviation
+            this[Teams.city] = it.city
+            this[Teams.conference] = it.conference
+            this[Teams.division] = it.division
+            this[Teams.fullName] = it.fullName
+            this[Teams.name] = it.name
+        }
     }
 }

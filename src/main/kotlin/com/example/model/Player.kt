@@ -1,6 +1,5 @@
 package com.example.model
 
-import com.example.model.Games.references
 import kotlinx.serialization.json.JsonNames
 import org.jetbrains.exposed.sql.Table
 
@@ -13,7 +12,8 @@ data class Player(
     @JsonNames("height_inches") val heightInches: Int?,
     @JsonNames("weight_pounds") val weightPounds: Int?,
     val team: Team,
-    val position: String
+    val position: String,
+    var imageUrl: String = ""
 )
 
 object Players : Table() {
