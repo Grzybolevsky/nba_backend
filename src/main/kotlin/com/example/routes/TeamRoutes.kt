@@ -12,12 +12,21 @@ fun Application.teamRoutes() {
     routing {
         allTeamsRoute()
         singleTeamRoute()
+        countTeams()
+    }
+}
+
+fun Route.countTeams() {
+    get("/teams/count") {
+        call.respond(service.getCount())
     }
 }
 
 fun Route.allTeamsRoute() {
     get("/teams") {
-        call.respond(service.getAllTeams())
+        val page = call.request.queryParameters["page"]?.toInt() ?: 0
+        val limit = call.request.queryParameters["limit"]?.toInt() ?: 20
+        call.respond(service.getAllTeams(page, limit))
     }
 }
 

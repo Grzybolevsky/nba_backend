@@ -6,6 +6,7 @@ import com.example.model.Player
 import com.example.model.Team
 import com.example.services.HttpClientService
 import com.example.services.images.ImageService
+import com.example.services.images.PlayerInfo
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.lang.Thread.sleep
@@ -16,7 +17,15 @@ object BalldontileInfoService {
     private val daoPlayers: DAOFacadePlayer = DAOFacadePlayerImpl()
     private val daoGames: DAOFacadeGame = DAOFacadeGameImpl()
     private val daoTeams: DAOFacadeTeam = DAOFacadeTeamImpl()
-    private val playersImageIds = ImageService.getPlayerIds()
+    private val playersImageIds = fetchPlayerIds()
+
+    private fun fetchPlayerIds(): List<PlayerInfo> {
+        val playerIds = ArrayList<PlayerInfo>()
+        (2012..2021).forEach { year ->
+            playerIds.addAll(ImageService.getPlayerIdsForYear(year))
+        }
+        return playerIds
+    }
 
     suspend fun fetchData() {
         fetchTeams()

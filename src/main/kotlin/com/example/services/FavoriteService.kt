@@ -3,17 +3,26 @@ package com.example.services
 import com.example.model.Player
 
 object FavoriteService {
-    fun getAllFavorites(user: String): List<Player> {
+    fun getFavoritePlayers(user: String): List<Player> {
 
         return emptyList()
     }
 
-    fun deleteFavorite(id: Int): Boolean {
+    fun deleteFavoritePlayer(user: String, playerId: Int): Boolean {
 
         return false
     }
 
-    fun addFavorite(id: Int): Boolean {
+    fun addFavoritePlayer(user: String, playerId: Int): Boolean {
         return false
+    }
+
+    fun getFavoriteTeams(user: String) {
+    }
+
+    fun addFavoriteTeam(user: String, teamId: Int) {
+    }
+
+    fun deleteFavoriteTeam(user: String, teamId: Int) {
     }
 }

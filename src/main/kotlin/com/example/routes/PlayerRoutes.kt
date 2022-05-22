@@ -12,12 +12,21 @@ fun Application.playerRoutes() {
     routing {
         allPlayersRoute()
         singlePlayerRoute()
+        playersCountRoute()
+    }
+}
+
+fun Route.playersCountRoute() {
+    get("/players/count") {
+        call.respond(service.getCount())
     }
 }
 
 fun Route.allPlayersRoute() {
     get("/players") {
-        call.respond(service.getAllPlayers())
+        val page = call.request.queryParameters["page"]?.toInt() ?: 0
+        val limit = call.request.queryParameters["limit"]?.toInt() ?: 20
+        call.respond(service.getAllPlayers(page, limit))
     }
 }
 

@@ -1,8 +1,6 @@
 package com.example.dao
 
-import com.example.model.Games
-import com.example.model.Players
-import com.example.model.Teams
+import com.example.model.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -25,14 +23,17 @@ object DatabaseFactory {
             SchemaUtils.drop(Players)
             SchemaUtils.drop(Games)
             SchemaUtils.drop(Teams)
+            SchemaUtils.drop(FavoritePlayers)
+            SchemaUtils.drop(FavoriteTeams)
         }
         transaction(database) {
             SchemaUtils.create(Teams)
             SchemaUtils.create(Games)
             SchemaUtils.create(Players)
+            SchemaUtils.create(FavoritePlayers)
+            SchemaUtils.create(FavoriteTeams)
         }
     }
 
-    suspend fun <T> dbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
+    suspend fun <T> dbQuery(block: suspend () -> T): T = newSuspendedTransaction(Dispatchers.IO) { block() }
 }

@@ -6,8 +6,12 @@ import com.example.model.Game
 object GameService {
     private val games: DAOFacadeGame = DAOFacadeGameImpl()
 
-    suspend fun getAllGames(): List<Game> {
-        return games.getAllGames()
+    suspend fun getCount(): Long {
+        return games.getCount()
+    }
+
+    suspend fun getAllGames(page: Int, limit: Int): List<Game> {
+        return games.getAllGames(page, limit)
     }
 
     suspend fun getGameById(id: Int): Game? {

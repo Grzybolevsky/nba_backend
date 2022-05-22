@@ -7,4 +7,5 @@ fun Application.configureRouting() {
     teamRoutes()
     gameRoutes()
     favoriteRoutes()
+    utilRoutes()
 }
