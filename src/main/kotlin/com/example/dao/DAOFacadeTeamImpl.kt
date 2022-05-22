@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 class DAOFacadeTeamImpl : DAOFacadeTeam {
-    fun resultRowToTeam(row: ResultRow) = Team(
+    private fun resultRowToTeam(row: ResultRow) = Team(
         id = row[Teams.id],
         abbreviation = row[Teams.abbreviation],
         city = row[Teams.city],

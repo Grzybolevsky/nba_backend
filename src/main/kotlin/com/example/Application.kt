@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.dao.DatabaseFactory
 import com.example.routes.configureRouting
 import com.example.security.configureSecurity
 import com.example.serialization.configureSerialization
@@ -11,5 +12,6 @@ fun main() {
         configureRouting()
         configureSecurity()
         configureSerialization()
+        DatabaseFactory.connect()
     }.start(wait = true)
 }

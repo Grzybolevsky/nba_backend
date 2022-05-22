@@ -10,6 +10,7 @@ plugins {
     application
     id("jvm-test-suite")
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+    id("org.sonarqube") version "3.3"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.jpa") version "1.6.21"
     kotlin("plugin.serialization") version "1.6.21"
@@ -139,4 +140,12 @@ tasks.compileKotlin {
 
 tasks.clean {
     dependsOn(tasks.named("ktlintFormat"))
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "nba_backend")
+        property("sonar.organization", "grzybolevsky")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }

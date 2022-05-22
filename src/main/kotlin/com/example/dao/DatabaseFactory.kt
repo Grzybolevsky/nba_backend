@@ -10,12 +10,20 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
+    private const val DRIVER_CLASS_NAME = "org.postgresql.Driver"
+    private const val JDBC_URL = "jdbc:postgresql://localhost:5432/nba"
+    private const val DB_USER = "user"
+    private const val DB_PASSWORD = "password"
+
+    fun connect(): Database {
+        return Database.connect(JDBC_URL, DRIVER_CLASS_NAME, DB_USER, DB_PASSWORD)
+    }
+
     fun init() {
-        val driverClassName = "org.postgresql.Driver"
-        val jdbcURL = "jdbc:postgresql://localhost:5432/nba"
-        val user = "user"
-        val password = "password"
-        val database = Database.connect(jdbcURL, driverClassName, user, password)
+        val database = connect()
+        transaction(database) {
+            SchemaUtils.dropDatabase()
+        }
         transaction(database) {
             SchemaUtils.create(Teams)
             SchemaUtils.create(Games)

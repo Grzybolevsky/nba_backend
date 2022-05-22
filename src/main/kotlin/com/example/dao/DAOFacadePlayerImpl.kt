@@ -11,7 +11,7 @@ class DAOFacadePlayerImpl : DAOFacadePlayer {
 
     private val daoTeams: DAOFacadeTeam = DAOFacadeTeamImpl()
 
-    suspend fun resultRowToPlayer(row: ResultRow) = Player(
+    private suspend fun resultRowToPlayer(row: ResultRow) = Player(
         id = row[Players.id],
         firstName = row[Players.firstName],
         lastName = row[Players.lastName],
@@ -34,7 +34,8 @@ class DAOFacadePlayerImpl : DAOFacadePlayer {
         heightInches: Int?,
         weightPounds: Int?,
         teamID: Int,
-        position: String
+        position: String,
+        imageUrl: String
     ): Player? = dbQuery {
         val insertStatement = Players.insert {
             it[Players.id] = id
@@ -45,6 +46,7 @@ class DAOFacadePlayerImpl : DAOFacadePlayer {
             it[Players.weightPounds] = weightPounds ?: 0
             it[Players.teamID] = teamID
             it[Players.position] = position
+            it[Players.imageUrl] = imageUrl
         }
         insertStatement.resultedValues?.singleOrNull()?.let { resultRowToPlayer(it) }
     }

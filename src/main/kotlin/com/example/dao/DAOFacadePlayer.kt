@@ -4,6 +4,7 @@ import com.example.model.Player
 
 interface DAOFacadePlayer {
     suspend fun allPlayers(): List<Player>
+
     suspend fun addNewPlayer(
         id: Int,
         firstName: String,
@@ -12,6 +13,7 @@ interface DAOFacadePlayer {
         heightInches: Int?,
         weightPounds: Int?,
         teamID: Int,
-        position: String
+        position: String,
+        imageUrl: String
     ): Player?
 }

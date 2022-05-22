@@ -25,6 +25,7 @@ object Players : Table() {
     val weightPounds = integer("weightPounds")
     val teamID = integer("TeamID").references(Teams.id)
     val position = varchar("position", 128)
+    val imageUrl = varchar("imageUrl", 128)
 
     override val primaryKey = PrimaryKey(id)
 }

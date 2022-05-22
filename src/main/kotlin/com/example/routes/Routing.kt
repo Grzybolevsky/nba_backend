@@ -1,11 +1,11 @@
 package com.example.routes
 
 import io.ktor.server.application.*
-import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
-
-    routing {
-        simpleRoute()
-    }
+    simpleRoutes()
+    playerRoutes()
+    teamRoutes()
+    gameRoutes()
+    favoriteRoutes()
 }
