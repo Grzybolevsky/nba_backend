@@ -10,7 +10,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 object BalldontileInfoService {
-
     private const val API = "https://www.balldontlie.io/api/v1"
     private val format = Json { ignoreUnknownKeys = true }
     private val daoPlayers: DAOFacadePlayer = DAOFacadePlayerImpl()
@@ -42,18 +41,11 @@ object BalldontileInfoService {
     private suspend fun storePlayerInDB(player: Player) {
         val playerInfo = playersImageIds.find {
             it.firstName == player.firstName &&
-                it.lastName == player.lastName
+                    it.lastName == player.lastName
         }
 
         daoPlayers.addNewPlayer(
-            player.id,
-            player.firstName,
-            player.lastName,
-            player.heightFeet,
-            player.heightInches,
-            player.weightPounds,
-            player.team.id,
-            player.position,
+            player,
             when {
                 playerInfo != null -> ImageService.getImageUrlForId(playerInfo.personId)
                 else -> ""
@@ -77,17 +69,7 @@ object BalldontileInfoService {
     }
 
     private suspend fun storeGameInDB(game: Game) {
-        daoGames.addNewGame(
-            game.id,
-            game.date,
-            game.homeTeam.id,
-            game.visitorTeam.id,
-            game.homeTeamScore,
-            game.visitorTeamScore,
-            game.period,
-            game.season,
-            game.status
-        )
+        daoGames.addNewGame(game)
     }
 
     private suspend fun fetchTeams() {
@@ -99,14 +81,6 @@ object BalldontileInfoService {
     }
 
     private suspend fun storeTeamInDB(team: Team) {
-        daoTeams.addNewTeam(
-            team.id,
-            team.abbreviation,
-            team.city,
-            team.conference,
-            team.division,
-            team.fullName,
-            team.name
-        )
+        daoTeams.addNewTeam(team)
     }
 }

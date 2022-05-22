@@ -3,17 +3,8 @@ package com.example.dao
 import com.example.model.Player
 
 interface DAOFacadePlayer {
-    suspend fun allPlayers(): List<Player>
-
-    suspend fun addNewPlayer(
-        id: Int,
-        firstName: String,
-        lastName: String,
-        heightFeet: Int?,
-        heightInches: Int?,
-        weightPounds: Int?,
-        teamID: Int,
-        position: String,
-        imageUrl: String
-    ): Player?
+    suspend fun getAllPlayers(): List<Player>
+    suspend fun getPlayerById(id: Int): Player
+    suspend fun addNewPlayer(player: Player, imageUrl: String): Player?
+    suspend fun addNewPlayers(players: List<Player>)
 }

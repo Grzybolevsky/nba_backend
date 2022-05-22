@@ -18,36 +18,34 @@ class DAOFacadePlayerImpl : DAOFacadePlayer {
         heightFeet = row[Players.heightFeet],
         heightInches = row[Players.heightInches],
         weightPounds = row[Players.weightPounds],
-        team = daoTeams.team(row[Players.teamID])!!,
-        position = row[Players.position],
-
+        team = daoTeams.getTeamById(row[Players.teamID])!!,
+        position = row[Players.position]
     )
-    override suspend fun allPlayers(): List<Player> = dbQuery {
+
+    override suspend fun getAllPlayers(): List<Player> = dbQuery {
         Players.selectAll().map { resultRowToPlayer(it) }
     }
 
-    override suspend fun addNewPlayer(
-        id: Int,
-        firstName: String,
-        lastName: String,
-        heightFeet: Int?,
-        heightInches: Int?,
-        weightPounds: Int?,
-        teamID: Int,
-        position: String,
-        imageUrl: String
-    ): Player? = dbQuery {
+    override suspend fun getPlayerById(id: Int): Player {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addNewPlayer(player: Player, imageUrl: String): Player? = dbQuery {
         val insertStatement = Players.insert {
-            it[Players.id] = id
-            it[Players.firstName] = firstName
-            it[Players.lastName] = lastName
-            it[Players.heightFeet] = heightFeet ?: 0
-            it[Players.heightInches] = heightInches ?: 0
-            it[Players.weightPounds] = weightPounds ?: 0
-            it[Players.teamID] = teamID
-            it[Players.position] = position
+            it[id] = player.id
+            it[firstName] = player.firstName
+            it[lastName] = player.lastName
+            it[heightFeet] = player.heightFeet ?: 0
+            it[heightInches] = player.heightInches ?: 0
+            it[weightPounds] = player.weightPounds ?: 0
+            it[teamID] = player.team.id
+            it[position] = player.position
             it[Players.imageUrl] = imageUrl
         }
         insertStatement.resultedValues?.singleOrNull()?.let { resultRowToPlayer(it) }
+    }
+
+    override suspend fun addNewPlayers(players: List<Player>) = dbQuery {
+        TODO("Not yet implemented")
     }
 }

@@ -19,45 +19,30 @@ class DAOFacadeTeamImpl : DAOFacadeTeam {
         name = row[Teams.name],
     )
 
-    override suspend fun allTeams(): List<Team> = dbQuery {
+    override suspend fun getAllTeams(): List<Team> = dbQuery {
         Teams.selectAll().map(::resultRowToTeam)
     }
 
-    override suspend fun addNewTeam(
-        id: Int,
-        abbreviation: String,
-        city: String,
-        conference: String,
-        division: String,
-        fullName: String,
-        name: String
-    ): Team? = dbQuery {
+    override suspend fun addNewTeam(team:Team): Team? = dbQuery {
         val insertStatement = Teams.insert {
-            it[Teams.id] = id
-            it[Teams.abbreviation] = abbreviation
-            it[Teams.city] = city
-            it[Teams.conference] = conference
-            it[Teams.division] = division
-            it[Teams.fullName] = fullName
-            it[Teams.name] = name
+            it[id] = team.id
+            it[abbreviation] = team.abbreviation
+            it[city] = team.city
+            it[conference] = team.conference
+            it[division] = team.division
+            it[fullName] = team.fullName
+            it[name] = team.name
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToTeam)
     }
 
-    override suspend fun team(id: Int): Team? = dbQuery {
-        Teams
-            .select { Teams.id eq id }
+    override suspend fun addNewTeams(teams: List<Team>) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getTeamById(id: Int): Team? = dbQuery {
+        Teams.select { Teams.id eq id }
             .map(::resultRowToTeam)
             .singleOrNull()
     }
-
-    /*
-    val dao: DAOFacadeTeam = DAOFacadeTeamImpl().apply {
-        runBlocking {
-            if (allTeams().isEmpty()) {
-                addNewTeam(2137, "Papieski Zespol", "Watykan", "JP2", "Kremowki", "Jan Pawel 2", "JP2")
-            }
-        }
-    }
-    */
 }

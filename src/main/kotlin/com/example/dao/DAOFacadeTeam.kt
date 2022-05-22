@@ -3,16 +3,8 @@ package com.example.dao
 import com.example.model.Team
 
 interface DAOFacadeTeam {
-    suspend fun allTeams(): List<Team>
-    suspend fun addNewTeam(
-        id: Int,
-        abbreviation: String,
-        city: String,
-        conference: String,
-        division: String,
-        fullName: String,
-        name: String
-    ): Team?
-
-    suspend fun team(id: Int): Team?
+    suspend fun getAllTeams(): List<Team>
+    suspend fun getTeamById(id: Int): Team?
+    suspend fun addNewTeam(team: Team): Team?
+    suspend fun addNewTeams(teams: List<Team>)
 }

@@ -9,6 +9,6 @@ object TeamService {
     private val teams: DAOFacadeTeam = DAOFacadeTeamImpl()
 
     suspend fun getAllTeams(): List<Team> {
-        return teams.allTeams()
+        return teams.getAllTeams()
     }
 }

@@ -9,6 +9,6 @@ object GameService {
     private val teams: DAOFacadeTeam = DAOFacadeTeamImpl()
 
     suspend fun getAllGames(): List<Game> {
-        return games.allGames()
+        return games.getAllGames()
     }
 }
