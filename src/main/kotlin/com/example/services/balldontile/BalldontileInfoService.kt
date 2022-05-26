@@ -1,6 +1,8 @@
 package com.example.services.balldontile
 
-import com.example.dao.*
+import com.example.dao.DAOFacadeGame
+import com.example.dao.DAOFacadePlayer
+import com.example.dao.DAOFacadeTeam
 import com.example.model.Game
 import com.example.model.Player
 import com.example.model.Team
@@ -14,9 +16,6 @@ import java.lang.Thread.sleep
 object BalldontileInfoService {
     private const val API = "https://www.balldontlie.io/api/v1"
     private val format = Json { ignoreUnknownKeys = true }
-    private val daoPlayers: DAOFacadePlayer = DAOFacadePlayerImpl()
-    private val daoGames: DAOFacadeGame = DAOFacadeGameImpl()
-    private val daoTeams: DAOFacadeTeam = DAOFacadeTeamImpl()
     private val playersImageIds = fetchPlayerIds()
 
     private fun fetchPlayerIds(): List<PlayerInfo> {
@@ -27,20 +26,20 @@ object BalldontileInfoService {
         return playerIds
     }
 
-    suspend fun fetchData() {
+    fun fetchData() {
         fetchTeams()
         fetchGames()
         fetchPlayers()
     }
 
-    private suspend fun fetchPlayers() {
+    private fun fetchPlayers() {
         val (data, meta) = fetchOnePlayersPage(1)
 
-        daoPlayers.addNewPlayers(data)
+        DAOFacadePlayer.addNewPlayers(data)
         (2..meta.totalPages).forEach { pageNumber ->
             val players = fetchOnePlayersPage(pageNumber).data
             fetchImageUrlsForPlayers(players)
-            daoPlayers.addNewPlayers(players)
+            DAOFacadePlayer.addNewPlayers(players)
             sleep(800)
         }
     }
@@ -63,12 +62,12 @@ object BalldontileInfoService {
         return format.decodeFromString(playersDataString)
     }
 
-    private suspend fun fetchGames() {
+    private fun fetchGames() {
         val (data, meta) = fetchOneGamesPage(1)
 
-        daoGames.addNewGames(data)
+        DAOFacadeGame.addNewGames(data)
         (2..meta.totalPages).forEach { pageNumber ->
-            daoGames.addNewGames(fetchOneGamesPage(pageNumber).data)
+            DAOFacadeGame.addNewGames(fetchOneGamesPage(pageNumber).data)
             sleep(800)
         }
     }
@@ -79,11 +78,11 @@ object BalldontileInfoService {
         return format.decodeFromString(gamesDataString)
     }
 
-    private suspend fun fetchTeams() {
+    private fun fetchTeams() {
         val teamsURL = "$API/teams"
         val teamsDataString = HttpClientService.getFromUrl(teamsURL)
         val teamsData: RequestData<List<Team>> = format.decodeFromString(teamsDataString)
 
-        daoTeams.addNewTeams(teamsData.data)
+        DAOFacadeTeam.addNewTeams(teamsData.data)
     }
 }

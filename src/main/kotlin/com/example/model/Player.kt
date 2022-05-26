@@ -1,12 +1,17 @@
 package com.example.model
 
+import com.example.dao.DAOFacadeTeam
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Table
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class Player(
-    val id: Int,
+    @JsonNames("id") val playerId: Int,
     @JsonNames("first_name") val firstName: String,
     @JsonNames("last_name") val lastName: String,
     @JsonNames("height_feet") val heightFeet: Int?,
@@ -17,16 +22,42 @@ data class Player(
     var imageUrl: String = ""
 )
 
-object Players : Table() {
-    val id: Column<Int> = integer("id")
+object Players : IntIdTable() {
+    val playerId: Column<Int> = integer("playerId").uniqueIndex()
     val firstName: Column<String> = varchar("firstName", 128)
     val lastName: Column<String> = varchar("lastName", 128)
     val heightFeet: Column<Int> = integer("heightFeet")
-    val heightInches:Column<Int> = integer("heightInches")
-    val weightPounds:Column<Int> = integer("weightPounds")
-    val teamID:Column<Int> = integer("TeamID").references(Teams.id)
+    val heightInches: Column<Int> = integer("heightInches")
+    val weightPounds: Column<Int> = integer("weightPounds")
+    val teamID: Column<Int> = integer("teamID").references(Teams.teamId)
     val position: Column<String> = varchar("position", 128)
     val imageUrl: Column<String> = varchar("imageUrl", 128)
+}
 
-    override val primaryKey = PrimaryKey(id)
+class PlayerEntity(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<PlayerEntity>(Players)
+
+    var playerId by Players.playerId
+    var firstName by Players.firstName
+    var lastName by Players.lastName
+    var heightFeet by Players.heightFeet
+    var heightInches by Players.heightInches
+    var weightPounds by Players.weightPounds
+    var teamID by Players.teamID
+    var position by Players.position
+    var imageUrl by Players.imageUrl
+
+    fun toDomain(): Player {
+        return Player(
+            playerId = playerId,
+            firstName = firstName,
+            lastName = lastName,
+            heightFeet = heightFeet,
+            heightInches = heightInches,
+            weightPounds = weightPounds,
+            team = DAOFacadeTeam.getTeamById(teamID)!!,
+            position = position,
+            imageUrl = imageUrl
+        )
+    }
 }

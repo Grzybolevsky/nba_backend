@@ -1,12 +1,16 @@
 package com.example.model
 
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Table
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class Team(
-    val id: Int,
+    @JsonNames("id") val teamId: Int,
     val abbreviation: String,
     val city: String,
     val conference: String,
@@ -15,14 +19,34 @@ data class Team(
     val name: String
 )
 
-object Teams : Table() {
-    val id: Column<Int> = integer("id")
+object Teams : IntIdTable() {
+    val teamId: Column<Int> = integer("teamId").uniqueIndex()
     val abbreviation: Column<String> = varchar("abbreviation", 128)
     val city: Column<String> = varchar("city", 128)
     val conference: Column<String> = varchar("conference", 128)
     val division: Column<String> = varchar("division", 128)
     val fullName: Column<String> = varchar("fullName", 128)
     val name: Column<String> = varchar("Name", 128)
+}
 
-    override val primaryKey = PrimaryKey(id)
+class TeamEntity(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<TeamEntity>(Teams)
+
+    var teamId by Teams.teamId
+    var abbreviation by Teams.abbreviation
+    var city by Teams.city
+    var conference by Teams.conference
+    var division by Teams.division
+    var fullName by Teams.fullName
+    var name by Teams.name
+
+    fun toDomain() = Team(
+        teamId = this.teamId,
+        abbreviation = this.abbreviation,
+        city = this.city,
+        conference = this.conference,
+        division = this.division,
+        fullName = this.fullName,
+        name = this.name
+    )
 }
