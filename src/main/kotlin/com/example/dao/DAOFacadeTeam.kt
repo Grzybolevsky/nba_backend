@@ -8,15 +8,19 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DAOFacadeTeam {
     fun getAllTeams(page: Int, limit: Int): List<Team> {
-        return TeamEntity.all()
-            .limit(limit, offset = (limit * page).toLong())
-            .map(TeamEntity::toDomain)
+        return transaction {
+            TeamEntity.all()
+                .limit(limit, offset = (limit * page).toLong())
+                .map(TeamEntity::toDomain)
+        }
     }
 
     fun getTeamById(teamId: Int): Team? {
-        return TeamEntity.find { Teams.teamId eq teamId }
-            .map(TeamEntity::toDomain)
-            .singleOrNull()
+        return transaction {
+            TeamEntity.find { Teams.teamId eq teamId }
+                .map(TeamEntity::toDomain)
+                .singleOrNull()
+        }
     }
 
     fun addNewTeam(team: Team) {
@@ -46,6 +50,6 @@ object DAOFacadeTeam {
     }
 
     fun getCount(): Long {
-        return TeamEntity.count()
+        return transaction { TeamEntity.count() }
     }
 }

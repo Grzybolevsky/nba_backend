@@ -32,6 +32,30 @@ object BalldontileInfoService {
         fetchPlayers()
     }
 
+    private fun fetchTeams() {
+        val teamsURL = "$API/teams"
+        val teamsDataString = HttpClientService.getFromUrl(teamsURL)
+        val teamsData: RequestData<List<Team>> = format.decodeFromString(teamsDataString)
+
+        DAOFacadeTeam.addNewTeams(teamsData.data)
+    }
+
+    private fun fetchGames() {
+        val (data, meta) = fetchOneGamesPage(1)
+
+        DAOFacadeGame.addNewGames(data)
+        (2..meta.totalPages).forEach { pageNumber ->
+            DAOFacadeGame.addNewGames(fetchOneGamesPage(pageNumber).data)
+            sleep(500)
+        }
+    }
+
+    private fun fetchOneGamesPage(pageNumber: Int): RequestData<List<Game>> {
+        val gamesURL = "$API/games?per_page=100&page=$pageNumber"
+        val gamesDataString = HttpClientService.getFromUrl(gamesURL)
+        return format.decodeFromString(gamesDataString)
+    }
+
     private fun fetchPlayers() {
         val (data, meta) = fetchOnePlayersPage(1)
 
@@ -40,7 +64,7 @@ object BalldontileInfoService {
             val players = fetchOnePlayersPage(pageNumber).data
             fetchImageUrlsForPlayers(players)
             DAOFacadePlayer.addNewPlayers(players)
-            sleep(800)
+            sleep(500)
         }
     }
 
@@ -60,29 +84,5 @@ object BalldontileInfoService {
         val playersURL = "$API/players?per_page=100&page=$pageNumber"
         val playersDataString = HttpClientService.getFromUrl(playersURL)
         return format.decodeFromString(playersDataString)
-    }
-
-    private fun fetchGames() {
-        val (data, meta) = fetchOneGamesPage(1)
-
-        DAOFacadeGame.addNewGames(data)
-        (2..meta.totalPages).forEach { pageNumber ->
-            DAOFacadeGame.addNewGames(fetchOneGamesPage(pageNumber).data)
-            sleep(800)
-        }
-    }
-
-    private fun fetchOneGamesPage(pageNumber: Int): RequestData<List<Game>> {
-        val gamesURL = "$API/games?per_page=100&page=$pageNumber"
-        val gamesDataString = HttpClientService.getFromUrl(gamesURL)
-        return format.decodeFromString(gamesDataString)
-    }
-
-    private fun fetchTeams() {
-        val teamsURL = "$API/teams"
-        val teamsDataString = HttpClientService.getFromUrl(teamsURL)
-        val teamsData: RequestData<List<Team>> = format.decodeFromString(teamsDataString)
-
-        DAOFacadeTeam.addNewTeams(teamsData.data)
     }
 }
