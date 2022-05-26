@@ -1,28 +1,34 @@
 package com.example.services
 
-import com.example.model.Player
+import com.example.dao.DAOFacadeFavorites
+import com.example.dao.DAOFacadeFavoritesImpl
+import com.example.model.FavoritePlayer
+import com.example.model.FavoriteTeam
 
 object FavoriteService {
-    fun getFavoritePlayers(user: String): List<Player> {
+    private val favorites: DAOFacadeFavorites = DAOFacadeFavoritesImpl()
 
-        return emptyList()
+    suspend fun getFavoritePlayers(userId: Int): List<FavoritePlayer> {
+        return favorites.getFavoritePlayers(userId)
     }
 
-    fun deleteFavoritePlayer(user: String, playerId: Int): Boolean {
-
-        return false
+    suspend fun deleteFavoritePlayer(userId: Int, playerId: Int): Boolean {
+        return favorites.deleteFavoritePlayer(userId, playerId) > 0
     }
 
-    fun addFavoritePlayer(user: String, playerId: Int): Boolean {
-        return false
+    suspend fun addFavoritePlayer(userId: Int, playerId: Int) {
+        favorites.addFavoritePlayer(userId, playerId)
     }
 
-    fun getFavoriteTeams(user: String) {
+    suspend fun getFavoriteTeams(userId: Int): List<FavoriteTeam> {
+        return favorites.getFavoriteTeams(userId)
     }
 
-    fun addFavoriteTeam(user: String, teamId: Int) {
+    suspend fun addFavoriteTeam(userId: Int, teamId: Int) {
+        favorites.addFavoriteTeam(userId, teamId)
     }
 
-    fun deleteFavoriteTeam(user: String, teamId: Int) {
+    suspend fun deleteFavoriteTeam(userId: Int, teamId: Int): Boolean {
+        return favorites.deleteFavoriteTeam(userId, teamId) > 0
     }
 }

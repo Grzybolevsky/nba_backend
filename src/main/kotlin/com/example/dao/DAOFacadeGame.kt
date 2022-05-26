@@ -1,5 +1,6 @@
 package com.example.dao
 
+import com.example.dao.DatabaseFactory.dbQuery
 import com.example.model.Game
 import com.example.model.Games
 import org.jetbrains.exposed.sql.*
@@ -27,23 +28,23 @@ class DAOFacadeGameImpl : DAOFacadeGame {
         status = row[Games.status],
     )
 
-    override suspend fun getCount(): Long = DatabaseFactory.dbQuery {
+    override suspend fun getCount()= dbQuery {
         Games.selectAll().count()
     }
 
-    override suspend fun getAllGames(page: Int, limit: Int): List<Game> = DatabaseFactory.dbQuery {
+    override suspend fun getAllGames(page: Int, limit: Int)= dbQuery {
         Games.selectAll()
             .limit(limit, offset = (limit * page).toLong())
             .map { resultRowToGame(it) }
     }
 
-    override suspend fun getGameById(id: Int): Game? = DatabaseFactory.dbQuery {
+    override suspend fun getGameById(id: Int) = dbQuery {
         Games.select { Games.id eq id }
             .map { resultRowToGame(it) }
             .singleOrNull()
     }
 
-    override suspend fun addNewGame(game: Game): Game? = DatabaseFactory.dbQuery {
+    override suspend fun addNewGame(game: Game) = dbQuery {
         val insertStatement = Games.insert {
             it[id] = game.id
             it[date] = game.date
@@ -58,7 +59,7 @@ class DAOFacadeGameImpl : DAOFacadeGame {
         insertStatement.resultedValues?.singleOrNull()?.let { resultRowToGame(it) }
     }
 
-    override suspend fun addNewGames(games: List<Game>) = DatabaseFactory.dbQuery {
+    override suspend fun addNewGames(games: List<Game>) = dbQuery {
         val insertStatement = Games.batchInsert(games, shouldReturnGeneratedValues = false) {
             this[Games.id] = it.id
             this[Games.date] = it.date

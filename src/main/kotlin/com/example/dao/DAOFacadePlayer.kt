@@ -28,19 +28,19 @@ class DAOFacadePlayerImpl : DAOFacadePlayer {
         imageUrl = row[Players.imageUrl]
     )
 
-    override suspend fun getAllPlayers(page: Int, limit: Int): List<Player> = dbQuery {
+    override suspend fun getAllPlayers(page: Int, limit: Int) = dbQuery {
         Players.selectAll()
             .limit(limit, offset = (limit * page).toLong())
             .map { resultRowToPlayer(it) }
     }
 
-    override suspend fun getPlayerById(id: Int): Player? = dbQuery {
+    override suspend fun getPlayerById(id: Int) = dbQuery {
         Players.select { Players.id eq id }
             .map { resultRowToPlayer(it) }
             .singleOrNull()
     }
 
-    override suspend fun addNewPlayer(player: Player): Player? = dbQuery {
+    override suspend fun addNewPlayer(player: Player) = dbQuery {
         val insertStatement = Players.insert {
             it[id] = player.id
             it[firstName] = player.firstName
@@ -69,7 +69,7 @@ class DAOFacadePlayerImpl : DAOFacadePlayer {
         }
     }
 
-    override suspend fun getCount(): Long = dbQuery {
+    override suspend fun getCount() = dbQuery {
         Players.selectAll().count()
     }
 }

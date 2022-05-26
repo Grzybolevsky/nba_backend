@@ -1,5 +1,7 @@
 package com.example.model
 
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 
 @kotlinx.serialization.Serializable
@@ -11,15 +13,15 @@ data class FavoritePlayer(
 @kotlinx.serialization.Serializable
 data class FavoriteTeam(
     val userId: Int,
-    val favoritePlayerId: Int
+    val favoriteTeamId: Int
 )
 
-object FavoritePlayers : Table() {
-    val userId = integer("userId").index("favoritesPlayersUserIdIdx")
-    val playerId = integer("favoritePlayerId")
+object FavoritePlayers : IntIdTable() {
+    val userId: Column<Int> = integer("userId").index("favoritesPlayersUserIdIdx")
+    val playerId: Column<Int> = integer("favoritePlayerId")
 }
 
 object FavoriteTeams : Table() {
-    val userId = integer("userId").index("favoritesTeamsUserIdIdx")
-    val gameId = integer("favoriteTeamId")
+    val userId: Column<Int> = integer("userId").index("favoritesTeamsUserIdIdx")
+    val teamId: Column<Int> = integer("favoriteTeamId")
 }

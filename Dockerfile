@@ -23,7 +23,7 @@ RUN ./gradlew clean jar && \
     mv ./build/lib /out/ && \
     mv ./build/libs/*.jar /out/app.jar
 
-FROM alpine:3.15.4 AS RUNNER
+FROM alpine:3.16.0 AS RUNNER
 
 COPY --from=BUILDER /out /app
 

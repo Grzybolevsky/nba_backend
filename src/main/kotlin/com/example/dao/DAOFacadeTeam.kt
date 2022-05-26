@@ -24,19 +24,19 @@ class DAOFacadeTeamImpl : DAOFacadeTeam {
         name = row[Teams.name],
     )
 
-    override suspend fun getAllTeams(page: Int, limit: Int): List<Team> = dbQuery {
+    override suspend fun getAllTeams(page: Int, limit: Int)= dbQuery {
         Teams.selectAll()
             .limit(limit, offset = (limit * page).toLong())
             .map(::resultRowToTeam)
     }
 
-    override suspend fun getTeamById(id: Int): Team? = dbQuery {
+    override suspend fun getTeamById(id: Int) = dbQuery {
         Teams.select { Teams.id eq id }
             .map(::resultRowToTeam)
             .singleOrNull()
     }
 
-    override suspend fun addNewTeam(team: Team): Team? = dbQuery {
+    override suspend fun addNewTeam(team: Team) = dbQuery {
         val insertStatement = Teams.insert {
             it[id] = team.id
             it[abbreviation] = team.abbreviation
@@ -61,7 +61,7 @@ class DAOFacadeTeamImpl : DAOFacadeTeam {
         }
     }
 
-    override suspend fun getCount(): Long = dbQuery {
+    override suspend fun getCount() = dbQuery {
         Teams.selectAll().count()
     }
 }

@@ -25,7 +25,7 @@ fun Route.allFavoritePlayersRoute() {
     get("/favorite/players") {
         val userSession: UserSession? = call.sessions.get()
         if (userSession != null) {
-            call.respond(service.getFavoritePlayers(userSession.id))
+            call.respond(service.getFavoritePlayers(userSession.id.toInt()))
         } else {
             call.respondRedirect("/unauthorized")
         }
@@ -40,7 +40,7 @@ fun Route.addFavoritePlayer() {
             status = HttpStatusCode.BadRequest
         )
         if (userSession != null) {
-            call.respond(service.addFavoritePlayer(userSession.id, id.toInt()))
+            call.respond(service.addFavoritePlayer(userSession.id.toInt(), id.toInt()))
         } else {
             call.respondRedirect("/unauthorized")
         }
@@ -55,7 +55,7 @@ fun Route.deleteFavoritePlayer() {
             status = HttpStatusCode.BadRequest
         )
         if (userSession != null) {
-            call.respond(service.deleteFavoritePlayer(userSession.id, id.toInt()))
+            call.respond(service.deleteFavoritePlayer(userSession.id.toInt(), id.toInt()))
         } else {
             call.respondRedirect("/unauthorized")
         }
@@ -66,7 +66,7 @@ fun Route.allFavoriteTeamsRoute() {
     get("/favorite/teams") {
         val userSession: UserSession? = call.sessions.get()
         if (userSession != null) {
-            call.respond(service.getFavoriteTeams(userSession.id))
+            call.respond(service.getFavoriteTeams(userSession.id.toInt()))
         } else {
             call.respondRedirect("/unauthorized")
         }
@@ -81,7 +81,7 @@ fun Route.addFavoriteTeam() {
             status = HttpStatusCode.BadRequest
         )
         if (userSession != null) {
-            call.respond(service.addFavoriteTeam(userSession.id, id.toInt()))
+            call.respond(service.addFavoriteTeam(userSession.id.toInt(), id.toInt()))
         } else {
             call.respondRedirect("/unauthorized")
         }
@@ -96,7 +96,7 @@ fun Route.deleteFavoriteTeam() {
             status = HttpStatusCode.BadRequest
         )
         if (userSession != null) {
-            call.respond(service.deleteFavoriteTeam(userSession.id, id.toInt()))
+            call.respond(service.deleteFavoriteTeam(userSession.id.toInt(), id.toInt()))
         } else {
             call.respondRedirect("/unauthorized")
         }
