@@ -1,67 +1,55 @@
 package com.example.dao
 
-import com.example.dao.DatabaseFactory.dbQuery
 import com.example.model.Team
+import com.example.model.TeamEntity
 import com.example.model.Teams
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.transactions.transaction
 
-interface DAOFacadeTeam {
-    suspend fun getAllTeams(page: Int, limit: Int): List<Team>
-    suspend fun getTeamById(id: Int): Team?
-    suspend fun addNewTeam(team: Team): Team?
-    suspend fun addNewTeams(teams: List<Team>)
-    suspend fun getCount(): Long
-}
-
-class DAOFacadeTeamImpl : DAOFacadeTeam {
-    private fun resultRowToTeam(row: ResultRow) = Team(
-        id = row[Teams.id],
-        abbreviation = row[Teams.abbreviation],
-        city = row[Teams.city],
-        conference = row[Teams.conference],
-        division = row[Teams.division],
-        fullName = row[Teams.fullName],
-        name = row[Teams.name],
-    )
-
-    override suspend fun getAllTeams(page: Int, limit: Int)= dbQuery {
-        Teams.selectAll()
-            .limit(limit, offset = (limit * page).toLong())
-            .map(::resultRowToTeam)
-    }
-
-    override suspend fun getTeamById(id: Int) = dbQuery {
-        Teams.select { Teams.id eq id }
-            .map(::resultRowToTeam)
-            .singleOrNull()
-    }
-
-    override suspend fun addNewTeam(team: Team) = dbQuery {
-        val insertStatement = Teams.insert {
-            it[id] = team.id
-            it[abbreviation] = team.abbreviation
-            it[city] = team.city
-            it[conference] = team.conference
-            it[division] = team.division
-            it[fullName] = team.fullName
-            it[name] = team.name
-        }
-        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToTeam)
-    }
-
-    override suspend fun addNewTeams(teams: List<Team>) = dbQuery {
-        val insertStatement = Teams.batchInsert(teams, shouldReturnGeneratedValues = false) {
-            this[Teams.id] = it.id
-            this[Teams.abbreviation] = it.abbreviation
-            this[Teams.city] = it.city
-            this[Teams.conference] = it.conference
-            this[Teams.division] = it.division
-            this[Teams.fullName] = it.fullName
-            this[Teams.name] = it.name
+object DAOFacadeTeam {
+    fun getAllTeams(page: Int, limit: Int): List<Team> {
+        return transaction {
+            TeamEntity.all()
+                .limit(limit, offset = (limit * page).toLong())
+                .map(TeamEntity::toDomain)
         }
     }
 
-    override suspend fun getCount() = dbQuery {
-        Teams.selectAll().count()
+    fun getTeamById(teamId: Int): Team? {
+        return transaction {
+            TeamEntity.find { Teams.teamId eq teamId }
+                .map(TeamEntity::toDomain)
+                .singleOrNull()
+        }
+    }
+
+    fun addNewTeam(team: Team) {
+        TeamEntity.new {
+            teamId = team.teamId
+            abbreviation = team.abbreviation
+            city = team.city
+            conference = team.conference
+            division = team.division
+            fullName = team.fullName
+            name = team.name
+        }
+    }
+
+    fun addNewTeams(teams: List<Team>) {
+        transaction {
+            Teams.batchInsert(teams, shouldReturnGeneratedValues = false) {
+                this[Teams.teamId] = it.teamId
+                this[Teams.abbreviation] = it.abbreviation
+                this[Teams.city] = it.city
+                this[Teams.conference] = it.conference
+                this[Teams.division] = it.division
+                this[Teams.fullName] = it.fullName
+                this[Teams.name] = it.name
+            }
+        }
+    }
+
+    fun getCount(): Long {
+        return transaction { TeamEntity.count() }
     }
 }

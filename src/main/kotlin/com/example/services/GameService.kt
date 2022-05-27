@@ -1,20 +1,18 @@
 package com.example.services
 
-import com.example.dao.*
+import com.example.dao.DAOFacadeGame
 import com.example.model.Game
 
 object GameService {
-    private val games: DAOFacadeGame = DAOFacadeGameImpl()
-
-    suspend fun getCount(): Long {
-        return games.getCount()
+    fun getCount(): Long {
+        return DAOFacadeGame.getCount()
     }
 
-    suspend fun getAllGames(page: Int, limit: Int): List<Game> {
-        return games.getAllGames(page, limit)
+    fun getAllGames(page: Int, limit: Int): List<Game> {
+        return DAOFacadeGame.getAllGames(page, limit)
     }
 
-    suspend fun getGameById(id: Int): Game? {
-        return games.getGameById(id)
+    fun getGameById(id: Int): Game? {
+        return DAOFacadeGame.getGameById(id)
     }
 }

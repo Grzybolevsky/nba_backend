@@ -1,10 +1,8 @@
 package com.example.dao
 
 import com.example.model.*
-import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
@@ -20,11 +18,11 @@ object DatabaseFactory {
     fun init() {
         val database = connect()
         transaction(database) {
+            SchemaUtils.drop(FavoritePlayers)
+            SchemaUtils.drop(FavoriteTeams)
             SchemaUtils.drop(Players)
             SchemaUtils.drop(Games)
             SchemaUtils.drop(Teams)
-            SchemaUtils.drop(FavoritePlayers)
-            SchemaUtils.drop(FavoriteTeams)
         }
         transaction(database) {
             SchemaUtils.create(Teams)
@@ -34,6 +32,4 @@ object DatabaseFactory {
             SchemaUtils.create(FavoriteTeams)
         }
     }
-
-    suspend fun <T> dbQuery(block: suspend () -> T): T = newSuspendedTransaction(Dispatchers.IO) { block() }
 }

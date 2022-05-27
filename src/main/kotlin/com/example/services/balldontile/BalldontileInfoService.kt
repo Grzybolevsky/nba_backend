@@ -1,6 +1,8 @@
 package com.example.services.balldontile
 
-import com.example.dao.*
+import com.example.dao.DAOFacadeGame
+import com.example.dao.DAOFacadePlayer
+import com.example.dao.DAOFacadeTeam
 import com.example.model.Game
 import com.example.model.Player
 import com.example.model.Team
@@ -14,9 +16,6 @@ import java.lang.Thread.sleep
 object BalldontileInfoService {
     private const val API = "https://www.balldontlie.io/api/v1"
     private val format = Json { ignoreUnknownKeys = true }
-    private val daoPlayers: DAOFacadePlayer = DAOFacadePlayerImpl()
-    private val daoGames: DAOFacadeGame = DAOFacadeGameImpl()
-    private val daoTeams: DAOFacadeTeam = DAOFacadeTeamImpl()
     private val playersImageIds = fetchPlayerIds()
 
     private fun fetchPlayerIds(): List<PlayerInfo> {
@@ -27,21 +26,45 @@ object BalldontileInfoService {
         return playerIds
     }
 
-    suspend fun fetchData() {
+    fun fetchData() {
         fetchTeams()
         fetchGames()
         fetchPlayers()
     }
 
-    private suspend fun fetchPlayers() {
+    private fun fetchTeams() {
+        val teamsURL = "$API/teams"
+        val teamsDataString = HttpClientService.getFromUrl(teamsURL)
+        val teamsData: RequestData<List<Team>> = format.decodeFromString(teamsDataString)
+
+        DAOFacadeTeam.addNewTeams(teamsData.data)
+    }
+
+    private fun fetchGames() {
+        val (data, meta) = fetchOneGamesPage(1)
+
+        DAOFacadeGame.addNewGames(data)
+        (2..meta.totalPages).forEach { pageNumber ->
+            DAOFacadeGame.addNewGames(fetchOneGamesPage(pageNumber).data)
+            sleep(500)
+        }
+    }
+
+    private fun fetchOneGamesPage(pageNumber: Int): RequestData<List<Game>> {
+        val gamesURL = "$API/games?per_page=100&page=$pageNumber"
+        val gamesDataString = HttpClientService.getFromUrl(gamesURL)
+        return format.decodeFromString(gamesDataString)
+    }
+
+    private fun fetchPlayers() {
         val (data, meta) = fetchOnePlayersPage(1)
 
-        daoPlayers.addNewPlayers(data)
+        DAOFacadePlayer.addNewPlayers(data)
         (2..meta.totalPages).forEach { pageNumber ->
             val players = fetchOnePlayersPage(pageNumber).data
             fetchImageUrlsForPlayers(players)
-            daoPlayers.addNewPlayers(players)
-            sleep(800)
+            DAOFacadePlayer.addNewPlayers(players)
+            sleep(500)
         }
     }
 
@@ -61,29 +84,5 @@ object BalldontileInfoService {
         val playersURL = "$API/players?per_page=100&page=$pageNumber"
         val playersDataString = HttpClientService.getFromUrl(playersURL)
         return format.decodeFromString(playersDataString)
-    }
-
-    private suspend fun fetchGames() {
-        val (data, meta) = fetchOneGamesPage(1)
-
-        daoGames.addNewGames(data)
-        (2..meta.totalPages).forEach { pageNumber ->
-            daoGames.addNewGames(fetchOneGamesPage(pageNumber).data)
-            sleep(800)
-        }
-    }
-
-    private fun fetchOneGamesPage(pageNumber: Int): RequestData<List<Game>> {
-        val gamesURL = "$API/games?per_page=100&page=$pageNumber"
-        val gamesDataString = HttpClientService.getFromUrl(gamesURL)
-        return format.decodeFromString(gamesDataString)
-    }
-
-    private suspend fun fetchTeams() {
-        val teamsURL = "$API/teams"
-        val teamsDataString = HttpClientService.getFromUrl(teamsURL)
-        val teamsData: RequestData<List<Team>> = format.decodeFromString(teamsDataString)
-
-        daoTeams.addNewTeams(teamsData.data)
     }
 }
