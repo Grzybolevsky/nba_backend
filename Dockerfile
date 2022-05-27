@@ -1,4 +1,4 @@
-FROM openjdk:18.0.1.1-oraclelinux7 AS BUILDER
+FROM openjdk:18-oraclelinux8 AS BUILDER
 
 COPY . /app/
 WORKDIR /app/
