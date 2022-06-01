@@ -1,7 +1,9 @@
 package com.example.services.balldontile
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.JsonNames
 
+@OptIn(ExperimentalSerializationApi::class)
 @kotlinx.serialization.Serializable
 data class Metadata(
     @JsonNames("total_pages") val totalPages: Int,

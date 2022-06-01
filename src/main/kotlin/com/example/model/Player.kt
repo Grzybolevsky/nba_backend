@@ -1,6 +1,7 @@
 package com.example.model
 
 import com.example.dao.DAOFacadeTeam
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 import org.jetbrains.exposed.dao.IntEntity
@@ -9,6 +10,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class Player(
     @JsonNames("id") val playerId: Int,

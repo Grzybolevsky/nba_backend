@@ -5,6 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.JsonNames
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -13,6 +14,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
+@OptIn(ExperimentalSerializationApi::class)
 @kotlinx.serialization.Serializable
 data class Game(
     @JsonNames("id") val gameId: Int,

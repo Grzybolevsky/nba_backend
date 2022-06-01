@@ -9,11 +9,11 @@ val postgresVersion: String by project
 plugins {
     application
     id("jvm-test-suite")
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     id("org.sonarqube") version "3.3"
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.jpa") version "1.6.21"
-    kotlin("plugin.serialization") version "1.6.21"
+    kotlin("jvm") version "1.7.0-RC2"
+    kotlin("plugin.jpa") version "1.7.0-RC2"
+    kotlin("plugin.serialization") version "1.7.0-RC2"
 }
 
 group = "com.example"
@@ -42,11 +42,14 @@ dependencies {
     implementation("io.ktor:ktor-server-sessions-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-http-redirect-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors-jvm:$ktorVersion")
+    runtimeOnly("io.ktor:ktor-server-cors:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
