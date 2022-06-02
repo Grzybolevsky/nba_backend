@@ -2,7 +2,7 @@ FROM openjdk:18-oraclelinux8 AS BUILDER
 
 COPY . /app/
 WORKDIR /app/
-RUN ./gradlew clean jar && \
+RUN "./gradlew clean jar && \
     jdeps \
         --ignore-missing-deps \
         -q \
@@ -21,7 +21,7 @@ RUN ./gradlew clean jar && \
     mkdir /out && \
     mv ./build/jre /out/ && \
     mv ./build/lib /out/ && \
-    mv ./build/libs/*.jar /out/app.jar
+    mv ./build/libs/*.jar /out/app.jar"
 
 FROM alpine:3.16.0 AS RUNNER
 

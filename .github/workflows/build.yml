@@ -1,10 +1,14 @@
-name: Continuous Integration
+name: CI/CD pipeline
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -25,22 +29,35 @@ jobs:
         with:
           java-version: "17"
           distribution: "temurin"
-      - name: Lint Code Base
-        uses: github/super-linter@v4.9.4
-      - name: GitHub Actions Workflow Linter
-        uses: cschleiden/actions-linter@v1
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2.1.7
         with:
           arguments: build
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v1.6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      - name: SonarQube Quality Gate Check
-        uses: SonarSource/sonarqube-quality-gate-action@v1.0.0
-      - name: Official SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v1.1.0
-      - name: Container image scan
-        uses: Azure/container-scan@v0.1
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.0.3
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4.0.1
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Build image and push to Docker Hub
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
