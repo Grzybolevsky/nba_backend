@@ -1,12 +1,13 @@
 package com.example.model
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class FavoritePlayer(
     val userId: Int,
     val favoritePlayerId: Int
@@ -24,7 +25,7 @@ class FavoritePlayerEntity(id: EntityID<Int>) : IntEntity(id) {
     var playerId by FavoritePlayers.playerId
 }
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class FavoriteTeam(
     val userId: Int,
     val favoriteTeamId: Int

@@ -1,24 +1,22 @@
 package com.example.model
 
 import com.example.dao.DAOFacadeTeam
-import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonNames
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class Player(
-    @JsonNames("id") val playerId: Int,
-    @JsonNames("first_name") val firstName: String,
-    @JsonNames("last_name") val lastName: String,
-    @JsonNames("height_feet") val heightFeet: Int?,
-    @JsonNames("height_inches") val heightInches: Int?,
-    @JsonNames("weight_pounds") val weightPounds: Int?,
+    @SerialName("id") val playerId: Int,
+    @SerialName("first_name") val firstName: String,
+    @SerialName("last_name") val lastName: String,
+    @SerialName("height_feet") val heightFeet: Int?,
+    @SerialName("height_inches") val heightInches: Int?,
+    @SerialName("weight_pounds") val weightPounds: Int?,
     val team: Team,
     val position: String,
     var imageUrl: String = ""

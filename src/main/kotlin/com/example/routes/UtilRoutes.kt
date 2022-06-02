@@ -5,6 +5,12 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+object RoutingUtils {
+    const val UNAUTHORIZED = "/unauthorized"
+    const val LOGIN = "/login"
+    const val MISSING_ID = "Missing id"
+}
+
 fun Application.utilRoutes() {
     routing {
         unauthorized()

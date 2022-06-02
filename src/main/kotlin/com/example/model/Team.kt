@@ -1,7 +1,7 @@
 package com.example.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonNames
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -10,12 +10,12 @@ import org.jetbrains.exposed.sql.Column
 
 @Serializable
 data class Team(
-    @JsonNames("id") val teamId: Int,
+    @SerialName("id") val teamId: Int,
     val abbreviation: String,
     val city: String,
     val conference: String,
     val division: String,
-    @JsonNames("full_name") val fullName: String,
+    @SerialName("full_name") val fullName: String,
     val name: String
 )
 

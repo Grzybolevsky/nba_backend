@@ -1,9 +1,12 @@
 package com.example.routes
 
+import com.example.routes.RoutingUtils.LOGIN
+import com.example.routes.RoutingUtils.MISSING_ID
 import com.example.security.UserSession
 import com.example.services.FavoriteService
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -12,96 +15,102 @@ private val service = FavoriteService
 
 fun Application.favoriteRoutes() {
     routing {
-        allFavoritePlayersRoute()
-        addFavoritePlayer()
-        deleteFavoritePlayer()
-        allFavoriteTeamsRoute()
-        addFavoriteTeam()
-        deleteFavoriteTeam()
-    }
-}
-
-private const val UNAUTHORIZED = "/unauthorized"
-private const val MISSING_ID = "Missing id"
-
-fun Route.allFavoritePlayersRoute() {
-    get("/favorite/players") {
-        val userSession: UserSession? = call.sessions.get()
-        if (userSession != null) {
-            call.respond(service.getFavoritePlayers(userSession.id.toInt()))
-        } else {
-            call.respondRedirect(UNAUTHORIZED)
+        authenticate("auth-session") {
+            route("/favorites") {
+                favoritePlayers()
+                favoriteTeams()
+            }
         }
     }
 }
 
-fun Route.addFavoritePlayer() {
-    post("/favorite/player/{id}") {
-        val userSession: UserSession? = call.sessions.get()
-        val id = call.parameters["id"] ?: return@post call.respondText(
-            MISSING_ID,
-            status = HttpStatusCode.BadRequest
-        )
-        if (userSession != null) {
-            call.respond(service.addFavoritePlayer(userSession.id.toInt(), id.toInt()))
-        } else {
-            call.respondRedirect(UNAUTHORIZED)
+fun Route.favoritePlayers() {
+    route("/players") {
+        get("") {
+            when (val userSession: UserSession? = call.sessions.get()) {
+                null -> {
+                    call.respondRedirect(LOGIN)
+                }
+                else -> {
+                    call.respond(service.getFavoritePlayers(userSession.id.hashCode()))
+                }
+            }
+        }
+
+        post("/{id}") {
+            when (val userSession: UserSession? = call.sessions.get()) {
+                null -> {
+                    call.respondRedirect(LOGIN)
+                }
+                else -> {
+                    val id = call.parameters["id"] ?: return@post call.respondText(
+                        MISSING_ID,
+                        status = HttpStatusCode.BadRequest
+                    )
+                    call.respond(service.addFavoritePlayer(userSession.id.hashCode(), id.toInt()))
+                }
+            }
+        }
+
+        delete("/{id}") {
+            when (val userSession: UserSession? = call.sessions.get()) {
+                null -> {
+                    call.respondRedirect(LOGIN)
+                }
+                else -> {
+                    call.sessions.set(userSession.copy(count = userSession.count + 1))
+                    val id = call.parameters["id"] ?: return@delete call.respondText(
+                        MISSING_ID,
+                        status = HttpStatusCode.BadRequest
+                    )
+                    call.respond(service.deleteFavoritePlayer(userSession.id.hashCode(), id.toInt()))
+                }
+            }
         }
     }
 }
 
-fun Route.deleteFavoritePlayer() {
-    delete("/favorite/{id}") {
-        val userSession: UserSession? = call.sessions.get()
-        val id = call.parameters["id"] ?: return@delete call.respondText(
-            MISSING_ID,
-            status = HttpStatusCode.BadRequest
-        )
-        if (userSession != null) {
-            call.respond(service.deleteFavoritePlayer(userSession.id.toInt(), id.toInt()))
-        } else {
-            call.respondRedirect(UNAUTHORIZED)
+fun Route.favoriteTeams() {
+    route("/teams") {
+        get("") {
+            when (val userSession: UserSession? = call.sessions.get()) {
+                null -> {
+                    call.respondRedirect(LOGIN)
+                }
+                else -> {
+                    call.respond(service.getFavoriteTeams(userSession.id.hashCode()))
+                }
+            }
         }
-    }
-}
 
-fun Route.allFavoriteTeamsRoute() {
-    get("/favorite/teams") {
-        val userSession: UserSession? = call.sessions.get()
-        if (userSession != null) {
-            call.respond(service.getFavoriteTeams(userSession.id.toInt()))
-        } else {
-            call.respondRedirect(UNAUTHORIZED)
+        post("/{id}") {
+            when (val userSession: UserSession? = call.sessions.get()) {
+                null -> {
+                    call.respondRedirect(LOGIN)
+                }
+                else -> {
+                    val id = call.parameters["id"] ?: return@post call.respondText(
+                        MISSING_ID,
+                        status = HttpStatusCode.BadRequest
+                    )
+                    call.respond(service.addFavoriteTeam(userSession.id.hashCode(), id.toInt()))
+                }
+            }
         }
-    }
-}
 
-fun Route.addFavoriteTeam() {
-    post("/favorite/team/{id}") {
-        val userSession: UserSession? = call.sessions.get()
-        val id = call.parameters["id"] ?: return@post call.respondText(
-            MISSING_ID,
-            status = HttpStatusCode.BadRequest
-        )
-        if (userSession != null) {
-            call.respond(service.addFavoriteTeam(userSession.id.toInt(), id.toInt()))
-        } else {
-            call.respondRedirect(UNAUTHORIZED)
-        }
-    }
-}
-
-fun Route.deleteFavoriteTeam() {
-    delete("/favorite/team/{id}") {
-        val userSession: UserSession? = call.sessions.get()
-        val id = call.parameters["id"] ?: return@delete call.respondText(
-            MISSING_ID,
-            status = HttpStatusCode.BadRequest
-        )
-        if (userSession != null) {
-            call.respond(service.deleteFavoriteTeam(userSession.id.toInt(), id.toInt()))
-        } else {
-            call.respondRedirect(UNAUTHORIZED)
+        delete("/{id}") {
+            when (val userSession: UserSession? = call.sessions.get()) {
+                null -> {
+                    call.respondRedirect(LOGIN)
+                }
+                else -> {
+                    val id = call.parameters["id"] ?: return@delete call.respondText(
+                        MISSING_ID,
+                        status = HttpStatusCode.BadRequest
+                    )
+                    call.respond(service.deleteFavoriteTeam(userSession.id.hashCode(), id.toInt()))
+                }
+            }
         }
     }
 }

@@ -5,8 +5,8 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.JsonNames
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -14,15 +14,14 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-@OptIn(ExperimentalSerializationApi::class)
-@kotlinx.serialization.Serializable
+@Serializable
 data class Game(
-    @JsonNames("id") val gameId: Int,
+    @SerialName("id") val gameId: Int,
     val date: Instant,
-    @JsonNames("home_team") val homeTeam: Team,
-    @JsonNames("visitor_team") val visitorTeam: Team,
-    @JsonNames("home_team_score") val homeTeamScore: Int,
-    @JsonNames("visitor_team_score") val visitorTeamScore: Int,
+    @SerialName("home_team") val homeTeam: Team,
+    @SerialName("visitor_team") val visitorTeam: Team,
+    @SerialName("home_team_score") val homeTeamScore: Int,
+    @SerialName("visitor_team_score") val visitorTeamScore: Int,
     val period: Int,
     val season: Int,
     val status: String

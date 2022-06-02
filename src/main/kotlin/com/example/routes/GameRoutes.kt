@@ -10,28 +10,24 @@ private val service = GameService
 
 fun Application.gameRoutes() {
     routing {
-        allGamesRoute()
-        singleGameRoute()
-        gamesCountRoute()
+        route("/games") {
+            games()
+        }
     }
 }
 
-fun Route.gamesCountRoute() {
-    get("/games/count") {
-        call.respond(service.getCount())
-    }
-}
-
-fun Route.allGamesRoute() {
-    get("/games") {
+fun Route.games() {
+    get("") {
         val page = call.request.queryParameters["page"]?.toInt() ?: 0
         val limit = call.request.queryParameters["limit"]?.toInt() ?: 20
         call.respond(service.getAllGames(page, limit))
     }
-}
 
-fun Route.singleGameRoute() {
-    get("/game/{id}") {
+    get("/count") {
+        call.respond(service.getCount())
+    }
+
+    get("/{id}") {
         val id = call.parameters["id"] ?: return@get call.respondText(
             "Missing id",
             status = HttpStatusCode.BadRequest
