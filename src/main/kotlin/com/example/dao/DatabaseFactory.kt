@@ -6,17 +6,16 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
-    private const val DRIVER_CLASS_NAME = "org.postgresql.Driver"
-    private const val JDBC_URL = "jdbc:postgresql://localhost:5432/nba"
-    private const val DB_USER = "user"
-    private const val DB_PASSWORD = "password"
-
-    fun connect(): Database {
-        return Database.connect(JDBC_URL, DRIVER_CLASS_NAME, DB_USER, DB_PASSWORD)
+    fun connect(
+        url: String,
+        driver: String,
+        user: String,
+        password: String
+    ): Database {
+        return Database.connect(url, driver, user, password)
     }
 
-    fun init() {
-        val database = connect()
+    fun init(database: Database) {
         transaction(database) {
             SchemaUtils.drop(FavoritePlayers)
             SchemaUtils.drop(FavoriteTeams)
