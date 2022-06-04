@@ -7,7 +7,6 @@ val exposedVersion: String by project
 val postgresVersion: String by project
 
 plugins {
-    id("jvm-test-suite")
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     kotlin("jvm") version "1.7.0-RC2"
     kotlin("plugin.serialization") version "1.7.0-RC2"
@@ -18,7 +17,7 @@ version = "0.0.1-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(18))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
@@ -59,7 +58,7 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "18"
+        jvmTarget = "17"
     }
 }
 
@@ -91,36 +90,6 @@ tasks.register<Exec>("runDocker") {
     dependsOn("buildDocker")
     workingDir("$projectDir")
     commandLine("docker", "run", "${project.name}:${project.version}")
-}
-
-testing {
-    suites {
-        val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
-        }
-
-        val integration by registering(JvmTestSuite::class) {
-            dependencies {
-                implementation(project)
-            }
-
-            targets {
-                all {
-                    testTask.configure {
-                        shouldRunAfter(test)
-                    }
-                }
-            }
-        }
-    }
-}
-
-val integrationImplementation: Configuration by configurations.getting {
-    extendsFrom(configurations.testImplementation.get())
-}
-
-tasks.check {
-    dependsOn(testing.suites.named("integration"))
 }
 
 tasks.compileKotlin {

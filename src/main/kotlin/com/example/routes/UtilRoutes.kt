@@ -18,7 +18,7 @@ fun Application.utilRoutes() {
 }
 
 fun Route.unauthorized() {
-    get("/unauthorized") {
+    get("/api/unauthorized") {
         call.respond(HttpStatusCode.Unauthorized)
     }
 }

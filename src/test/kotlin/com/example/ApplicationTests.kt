@@ -2,7 +2,6 @@ package com.example
 
 import com.example.routes.configureRouting
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlin.test.Test
@@ -14,9 +13,8 @@ class ApplicationTests {
         application {
             configureRouting()
         }
-        client.get("/").apply {
+        client.get("/api").apply {
             assertEquals(HttpStatusCode.OK, status)
-            assertEquals("Hello World!", bodyAsText())
         }
     }
 }

@@ -17,11 +17,11 @@ import kotlinx.html.p
 
 fun Application.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient) {
     routing {
-        get("/api/") {
+        get("/api") {
             call.respondHtml {
                 body {
                     p {
-                        a("/login") { +"Login with Google" }
+                        a("/api/login") { +"Login with Google" }
                     }
                 }
             }

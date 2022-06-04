@@ -14,14 +14,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v3.0.3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
       - name: Checkout code
         uses: actions/checkout@v3.0.2
       - name: Set up JDK 17
@@ -29,10 +21,12 @@ jobs:
         with:
           java-version: "17"
           distribution: "temurin"
+          cache: "gradle"
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2.1.7
         with:
           arguments: build
+          gradle-version: 7.4.2
   deploy:
     needs: build
     if: github.event_name != 'pull_request'
