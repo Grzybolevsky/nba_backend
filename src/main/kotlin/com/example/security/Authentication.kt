@@ -18,7 +18,7 @@ fun Application.configureAuthentication(httpClient: HttpClient = applicationHttp
         }
         oauth("auth-oauth-google") {
             skipWhen { call -> call.sessions.get<UserSession>() != null }
-            urlProvider = { "http://localhost:8080/callback" }
+            urlProvider = { "/api/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "google",

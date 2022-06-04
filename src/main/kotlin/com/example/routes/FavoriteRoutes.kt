@@ -16,7 +16,7 @@ private val service = FavoriteService
 fun Application.favoriteRoutes() {
     routing {
         authenticate("auth-session") {
-            route("/favorites") {
+            route("/api/favorites") {
                 favoritePlayers()
                 favoriteTeams()
             }

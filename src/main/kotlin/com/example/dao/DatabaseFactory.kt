@@ -20,12 +20,10 @@ object DatabaseFactory {
             SchemaUtils.drop(FavoritePlayers)
             SchemaUtils.drop(FavoriteTeams)
             SchemaUtils.drop(Players)
-            SchemaUtils.drop(Games)
             SchemaUtils.drop(Teams)
         }
         transaction(database) {
             SchemaUtils.create(Teams)
-            SchemaUtils.create(Games)
             SchemaUtils.create(Players)
             SchemaUtils.create(FavoritePlayers)
             SchemaUtils.create(FavoriteTeams)

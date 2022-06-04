@@ -1,9 +1,7 @@
 package com.example.services.balldontile
 
-import com.example.dao.DAOFacadeGame
 import com.example.dao.DAOFacadePlayer
 import com.example.dao.DAOFacadeTeam
-import com.example.model.Game
 import com.example.model.Player
 import com.example.model.Team
 import com.example.services.HttpClientService
@@ -28,7 +26,6 @@ object BalldontileInfoService {
 
     fun fetchData() {
         fetchTeams()
-        fetchGames()
         fetchPlayers()
     }
 
@@ -38,22 +35,6 @@ object BalldontileInfoService {
         val teamsData: RequestData<List<Team>> = format.decodeFromString(teamsDataString)
 
         DAOFacadeTeam.addNewTeams(teamsData.data)
-    }
-
-    private fun fetchGames() {
-        val (data, meta) = fetchOneGamesPage(1)
-
-        DAOFacadeGame.addNewGames(data)
-        (2..meta.totalPages).forEach { pageNumber ->
-            DAOFacadeGame.addNewGames(fetchOneGamesPage(pageNumber).data)
-            sleep(500)
-        }
-    }
-
-    private fun fetchOneGamesPage(pageNumber: Int): RequestData<List<Game>> {
-        val gamesURL = "$API/games?per_page=100&page=$pageNumber"
-        val gamesDataString = HttpClientService.getFromUrl(gamesURL)
-        return format.decodeFromString(gamesDataString)
     }
 
     private fun fetchPlayers() {

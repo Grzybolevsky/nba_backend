@@ -10,7 +10,7 @@ private val service = PlayerService
 
 fun Application.playerRoutes() {
     routing {
-        route("/players") {
+        route("/api/players") {
             players()
         }
     }

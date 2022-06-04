@@ -17,7 +17,7 @@ import kotlinx.html.p
 
 fun Application.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient) {
     routing {
-        get("/") {
+        get("/api/") {
             call.respondHtml {
                 body {
                     p {
@@ -27,17 +27,17 @@ fun Application.configureSecurityRoutes(httpClient: HttpClient = applicationHttp
             }
         }
         authenticate("auth-oauth-google") {
-            get("/login") {
+            get("/api/login") {
             }
 
-            get("/callback") {
+            get("/api/callback") {
                 val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
                 call.sessions.set(UserSession(principal?.accessToken.toString(), 0))
-                call.respondRedirect("/hello")
+                call.respondRedirect("/api/hello")
             }
         }
 
-        get("/hello") {
+        get("/api/hello") {
             val userSession: UserSession? = call.sessions.get()
             if (userSession != null) {
                 val userInfo: UserInfo = httpClient.get("https://www.googleapis.com/oauth2/v2/userinfo") {
@@ -51,9 +51,9 @@ fun Application.configureSecurityRoutes(httpClient: HttpClient = applicationHttp
             }
         }
 
-        get("/logout") {
+        get("/api/logout") {
             call.sessions.clear<UserSession>()
-            call.respondRedirect("/login")
+            call.respondRedirect("/api/login")
         }
     }
 }
