@@ -9,9 +9,7 @@ val postgresVersion: String by project
 plugins {
     id("jvm-test-suite")
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
-    id("org.sonarqube") version "3.3"
     kotlin("jvm") version "1.7.0-RC2"
-    kotlin("plugin.jpa") version "1.7.0-RC2"
     kotlin("plugin.serialization") version "1.7.0-RC2"
 }
 
@@ -36,13 +34,12 @@ repositories {
 
 dependencies {
     implementation("io.ktor:ktor-server-core:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-server-sessions:$ktorVersion")
-    implementation("io.ktor:ktor-server-http-redirect:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-server-http-redirect:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-html-builder:$ktorVersion")
-    implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-sessions:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
@@ -53,17 +50,15 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
 
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
-    testImplementation("io.ktor:ktor-server-tests-jvm:2.0.2")
+    testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "18"
     }
 }
@@ -134,12 +129,4 @@ tasks.compileKotlin {
 
 tasks.clean {
     dependsOn(tasks.named("ktlintFormat"))
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "nba_backend")
-        property("sonar.organization", "grzybolevsky")
-        property("sonar.host.url", "https://sonarcloud.io")
-    }
 }
