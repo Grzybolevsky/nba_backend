@@ -1,8 +1,8 @@
-FROM openjdk:18-oraclelinux8 AS BUILDER
+FROM gradle:7.4.2-jdk18-jammy AS BUILDER
 
 COPY . /app/
 WORKDIR /app/
-RUN ./gradlew clean jar && \
+RUN gradle clean jar && \
     jdeps \
         --ignore-missing-deps \
         -q \
