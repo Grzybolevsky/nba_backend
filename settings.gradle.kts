@@ -1,1 +1,1 @@
-rootProject.name = "nba"
+rootProject.name = "nba_backend"

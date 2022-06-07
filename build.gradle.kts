@@ -5,19 +5,19 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 val exposedVersion: String by project
 val postgresVersion: String by project
+val javaVersion: String by project
 
 plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     kotlin("jvm") version "1.7.0-RC2"
     kotlin("plugin.serialization") version "1.7.0-RC2"
 }
-
-group = "com.example"
+group = "grzybolevsky"
 version = "0.0.1-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(javaVersion))
     }
 }
 
@@ -58,7 +58,7 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = javaVersion
     }
 }
 
@@ -78,6 +78,7 @@ val jar by tasks.getting(Jar::class) {
 }
 
 tasks.register<Exec>("buildDocker") {
+    dependsOn("jar")
     workingDir("$projectDir")
     commandLine(
         "docker", "build",

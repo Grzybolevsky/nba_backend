@@ -1,27 +1,25 @@
-FROM gradle:7.4.2-jdk18-jammy AS BUILDER
+FROM openjdk:19-slim-buster AS BUILDER
 
-COPY . /app/
+COPY ./build/ /app/
 WORKDIR /app/
-RUN gradle clean jar && \
-    jdeps \
-        --ignore-missing-deps \
+RUN jdeps --ignore-missing-deps \
         -q \
-        --multi-release 18 \
+        --multi-release 19 \
         --print-module-deps \
-        --class-path ./build/lib/* \
-        ./build/libs/* > jre-deps.info && \
+        --class-path ./lib/* \
+        ./libs/* > jre-deps.info && \
     jlink --verbose \
         --compress 2 \
         --strip-java-debug-attributes \
         --no-header-files \
         --no-man-pages \
-        --output ./build/jre \
+        --output ./jre \
         --add-modules $(cat jre-deps.info) \
     && \
     mkdir /out && \
-    mv ./build/jre /out/ && \
-    mv ./build/lib /out/ && \
-    mv ./build/libs/*.jar /out/app.jar
+    mv ./jre /out/ && \
+    mv ./lib /out/ && \
+    mv ./libs/*.jar /out/app.jar
 
 FROM ubuntu:latest AS RUNNER
 
