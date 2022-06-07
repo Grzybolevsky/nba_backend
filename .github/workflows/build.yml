@@ -11,7 +11,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  build-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

@@ -4,7 +4,7 @@ COPY ./build/ /app/
 WORKDIR /app/
 RUN jdeps --ignore-missing-deps \
         -q \
-        --multi-release 19 \
+        --multi-release 17 \
         --print-module-deps \
         --class-path ./lib/* \
         ./libs/* > jre-deps.info && \
