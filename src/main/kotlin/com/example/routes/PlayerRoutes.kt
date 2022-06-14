@@ -8,11 +8,9 @@ import io.ktor.server.routing.*
 
 private val service = PlayerService
 
-fun Application.playerRoutes() {
-    routing {
-        route("/api/players") {
-            players()
-        }
+fun Route.playerRoutes() {
+    route("/players") {
+        players()
     }
 }
 
@@ -20,11 +18,11 @@ fun Route.players() {
     get("") {
         val page = call.request.queryParameters["page"]?.toInt() ?: 0
         val limit = call.request.queryParameters["limit"]?.toInt() ?: 20
-        call.respond(service.getAllPlayers(page, limit))
+        call.respond(HttpStatusCode.OK, service.getAllPlayers(page, limit))
     }
 
     get("/count") {
-        call.respond(service.getCount())
+        call.respond(HttpStatusCode.OK, service.getCount())
     }
 
     get("/{id}") {
@@ -36,6 +34,6 @@ fun Route.players() {
             "No player with id $id",
             status = HttpStatusCode.NotFound
         )
-        call.respond(player)
+        call.respond(HttpStatusCode.OK, player)
     }
 }

@@ -1,6 +1,8 @@
 package com.example.security
 
 import com.example.http.applicationHttpClient
+import com.example.routes.RoutingUtils.API_URL
+import com.example.routes.RoutingUtils.AUTH_URL
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -15,45 +17,71 @@ import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.p
 
-fun Application.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient) {
-    routing {
-        get("/api") {
-            call.respondHtml {
-                body {
-                    p {
-                        a("/api/login") { +"Login with Google" }
-                    }
+fun Route.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient) {
+    get("") {
+        call.respondHtml {
+            body {
+                p {
+                    a("$API_URL$AUTH_URL") { +"Login with Google" }
                 }
             }
         }
-        authenticate("auth-oauth-google") {
-            get("/api/login") {
-            }
+    }
 
-            get("/api/callback") {
-                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
-                call.sessions.set(UserSession(principal?.accessToken.toString(), 0))
-                call.respondRedirect("/api/hello")
-            }
+    authenticate("auth-oauth-google") {
+        get(AUTH_URL) {
+            call.respondRedirect("$API_URL/auth/info")
         }
 
-        get("/api/hello") {
-            val userSession: UserSession? = call.sessions.get()
-            if (userSession != null) {
-                val userInfo: UserInfo = httpClient.get("https://www.googleapis.com/oauth2/v2/userinfo") {
-                    headers {
-                        append(HttpHeaders.Authorization, "Bearer ${userSession.id}")
-                    }
-                }.body()
-                call.respondText("Hello, ${userInfo.name}!")
-            } else {
-                call.respondRedirect("/")
-            }
+        get("/callback") {
+            val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
+            call.sessions.set(UserSession(principal?.accessToken.toString(), 0))
+            call.respondRedirect("$API_URL/auth/hello")
         }
+    }
 
-        get("/api/logout") {
+    get("/auth/hello") {
+        val userSession: UserSession? = call.sessions.get()
+        if (userSession != null) {
+            val userInfo: UserInfo = httpClient.get("https://www.googleapis.com/oauth2/v2/userinfo") {
+                headers {
+                    append(HttpHeaders.Authorization, "Bearer ${userSession.id}")
+                }
+            }.body()
+            call.respondText("Hello, ${userInfo.name}!")
+        } else {
+            call.respond(HttpStatusCode.Forbidden)
+        }
+    }
+
+    get("/auth/info") {
+        val userSession: UserSession? = call.sessions.get()
+        if (userSession != null) {
+            val userInfo: UserInfo = httpClient.get("https://www.googleapis.com/oauth2/v2/userinfo") {
+                headers {
+                    append(HttpHeaders.Authorization, "Bearer ${userSession.id}")
+                }
+            }.body()
+            call.respond(userInfo)
+        } else {
+            call.respond(HttpStatusCode.Forbidden)
+        }
+    }
+
+    get("/auth/check") {
+        if (call.sessions.get<UserSession>() != null) {
+            call.respond(HttpStatusCode.OK)
+        } else {
+            call.respond(HttpStatusCode.Forbidden)
+        }
+    }
+
+    get("/auth/logout") {
+        if (call.sessions.get<UserSession>() != null) {
             call.sessions.clear<UserSession>()
-            call.respondRedirect("/api/login")
+            call.respond(HttpStatusCode.OK)
+        } else {
+            call.respond(HttpStatusCode.Forbidden)
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.security
 
 import com.example.http.applicationHttpClient
+import com.example.routes.RoutingUtils.API_URL
+import com.example.routes.RoutingUtils.AUTH_URL
 import io.ktor.client.*
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -13,12 +15,12 @@ fun Application.configureAuthentication(httpClient: HttpClient = applicationHttp
         session<UserSession>("auth-session") {
             validate { it }
             challenge {
-                call.respondRedirect("/")
+                call.respondRedirect("$API_URL$AUTH_URL")
             }
         }
         oauth("auth-oauth-google") {
             skipWhen { call -> call.sessions.get<UserSession>() != null }
-            urlProvider = { "/api/callback" }
+            urlProvider = { "http://localhost:8080/api/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "google",

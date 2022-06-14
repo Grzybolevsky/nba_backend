@@ -1,6 +1,9 @@
 package com.example.dao
 
-import com.example.model.*
+import com.example.model.FavoritePlayers
+import com.example.model.FavoriteTeams
+import com.example.model.Players
+import com.example.model.Teams
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction

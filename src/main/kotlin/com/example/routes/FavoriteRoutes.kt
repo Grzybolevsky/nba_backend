@@ -1,6 +1,5 @@
 package com.example.routes
 
-import com.example.routes.RoutingUtils.LOGIN
 import com.example.routes.RoutingUtils.MISSING_ID
 import com.example.security.UserSession
 import com.example.services.FavoriteService
@@ -13,13 +12,11 @@ import io.ktor.server.sessions.*
 
 private val service = FavoriteService
 
-fun Application.favoriteRoutes() {
-    routing {
-        authenticate("auth-session") {
-            route("/api/favorites") {
-                favoritePlayers()
-                favoriteTeams()
-            }
+fun Route.favoriteRoutes() {
+    authenticate("auth-session") {
+        route("/favorites") {
+            favoritePlayers()
+            favoriteTeams()
         }
     }
 }
@@ -29,10 +26,10 @@ fun Route.favoritePlayers() {
         get("") {
             when (val userSession: UserSession? = call.sessions.get()) {
                 null -> {
-                    call.respondRedirect(LOGIN)
+                    call.respond(HttpStatusCode.Forbidden)
                 }
                 else -> {
-                    call.respond(service.getFavoritePlayers(userSession.id.hashCode()))
+                    call.respond(HttpStatusCode.OK, service.getFavoritePlayers(userSession.id.hashCode()))
                 }
             }
         }
@@ -40,14 +37,14 @@ fun Route.favoritePlayers() {
         post("/{id}") {
             when (val userSession: UserSession? = call.sessions.get()) {
                 null -> {
-                    call.respondRedirect(LOGIN)
+                    call.respond(HttpStatusCode.Forbidden)
                 }
                 else -> {
                     val id = call.parameters["id"] ?: return@post call.respondText(
                         MISSING_ID,
                         status = HttpStatusCode.BadRequest
                     )
-                    call.respond(service.addFavoritePlayer(userSession.id.hashCode(), id.toInt()))
+                    call.respond(HttpStatusCode.OK, service.addFavoritePlayer(userSession.id.hashCode(), id.toInt()))
                 }
             }
         }
@@ -55,7 +52,7 @@ fun Route.favoritePlayers() {
         delete("/{id}") {
             when (val userSession: UserSession? = call.sessions.get()) {
                 null -> {
-                    call.respondRedirect(LOGIN)
+                    call.respond(HttpStatusCode.Forbidden)
                 }
                 else -> {
                     call.sessions.set(userSession.copy(count = userSession.count + 1))
@@ -63,7 +60,7 @@ fun Route.favoritePlayers() {
                         MISSING_ID,
                         status = HttpStatusCode.BadRequest
                     )
-                    call.respond(service.deleteFavoritePlayer(userSession.id.hashCode(), id.toInt()))
+                    call.respond(HttpStatusCode.OK, service.deleteFavoritePlayer(userSession.id.hashCode(), id.toInt()))
                 }
             }
         }
@@ -75,10 +72,10 @@ fun Route.favoriteTeams() {
         get("") {
             when (val userSession: UserSession? = call.sessions.get()) {
                 null -> {
-                    call.respondRedirect(LOGIN)
+                    call.respond(HttpStatusCode.Forbidden)
                 }
                 else -> {
-                    call.respond(service.getFavoriteTeams(userSession.id.hashCode()))
+                    call.respond(HttpStatusCode.OK, service.getFavoriteTeams(userSession.id.hashCode()))
                 }
             }
         }
@@ -86,14 +83,14 @@ fun Route.favoriteTeams() {
         post("/{id}") {
             when (val userSession: UserSession? = call.sessions.get()) {
                 null -> {
-                    call.respondRedirect(LOGIN)
+                    call.respond(HttpStatusCode.Forbidden)
                 }
                 else -> {
                     val id = call.parameters["id"] ?: return@post call.respondText(
                         MISSING_ID,
                         status = HttpStatusCode.BadRequest
                     )
-                    call.respond(service.addFavoriteTeam(userSession.id.hashCode(), id.toInt()))
+                    call.respond(HttpStatusCode.OK, service.addFavoriteTeam(userSession.id.hashCode(), id.toInt()))
                 }
             }
         }
@@ -101,14 +98,14 @@ fun Route.favoriteTeams() {
         delete("/{id}") {
             when (val userSession: UserSession? = call.sessions.get()) {
                 null -> {
-                    call.respondRedirect(LOGIN)
+                    call.respond(HttpStatusCode.Forbidden)
                 }
                 else -> {
                     val id = call.parameters["id"] ?: return@delete call.respondText(
                         MISSING_ID,
                         status = HttpStatusCode.BadRequest
                     )
-                    call.respond(service.deleteFavoriteTeam(userSession.id.hashCode(), id.toInt()))
+                    call.respond(HttpStatusCode.OK, service.deleteFavoriteTeam(userSession.id.hashCode(), id.toInt()))
                 }
             }
         }

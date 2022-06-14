@@ -13,7 +13,7 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
     val db_url = System.getenv("DB_URL")
-        ?: "jdbc:postgresql://db:5432/nba"
+        ?: "jdbc:postgresql://localhost:5432/nba"
     val db_driver = System.getenv("DB_DRIVER")
         ?: "org.postgresql.Driver"
     val db_user = System.getenv("DB_USER") ?: "user"
