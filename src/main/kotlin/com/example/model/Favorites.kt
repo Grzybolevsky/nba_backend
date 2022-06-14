@@ -16,6 +16,9 @@ data class FavoritePlayer(
 object FavoritePlayers : IntIdTable() {
     val userId: Column<Int> = integer("userId").index("favoritesPlayersUserIdIdx")
     val playerId: Column<Int> = integer("favoritePlayerId").references(Players.playerId)
+    init {
+        uniqueIndex("dropMultipleSameFavorites", userId, playerId)
+    }
 }
 
 class FavoritePlayerEntity(id: EntityID<Int>) : IntEntity(id) {

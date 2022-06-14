@@ -55,7 +55,6 @@ fun Route.favoritePlayers() {
                     call.respond(HttpStatusCode.Forbidden)
                 }
                 else -> {
-                    call.sessions.set(userSession.copy(count = userSession.count + 1))
                     val id = call.parameters["id"] ?: return@delete call.respondText(
                         MISSING_ID,
                         status = HttpStatusCode.BadRequest

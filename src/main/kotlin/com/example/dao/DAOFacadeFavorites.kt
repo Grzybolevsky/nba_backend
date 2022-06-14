@@ -28,10 +28,11 @@ object DAOFacadeFavorites {
             FavoritePlayerEntity.find { FavoritePlayers.userId eq userId and (FavoritePlayers.playerId eq playerId) }
                 .singleOrNull()
         }
-        return if (entity != null) {
-            entity.delete()
-            true
-        } else {
+        return if (entity != null)
+            transaction {
+                entity.delete()
+                true
+            } else {
             false
         }
     }
