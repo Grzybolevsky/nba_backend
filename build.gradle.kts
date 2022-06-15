@@ -8,6 +8,7 @@ val postgresVersion: String by project
 val javaVersion: String by project
 
 plugins {
+    application
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     kotlin("jvm") version "1.7.0"
     kotlin("plugin.serialization") version "1.7.0"
@@ -55,6 +56,10 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
+}
+
+application {
+    mainClass.set("com.example.ApplicationKt")
 }
 
 tasks.withType<KotlinCompile> {
