@@ -8,6 +8,8 @@ services:
       - "8080:8080"
     links:
       - db
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/nba
   db:
     container_name: db
     image: postgres
