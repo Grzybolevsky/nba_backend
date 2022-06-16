@@ -20,7 +20,7 @@ fun Application.configureAuthentication(httpClient: HttpClient = applicationHttp
         }
         oauth("auth-oauth-google") {
             skipWhen { call -> call.sessions.get<UserSession>() != null }
-            urlProvider = { "http://localhost:8080/api/callback" }
+            urlProvider = { "http://nbalb-1964010652.eu-central-1.elb.amazonaws.com:8080/api" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "google",
