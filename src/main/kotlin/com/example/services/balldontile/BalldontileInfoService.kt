@@ -12,7 +12,7 @@ import kotlinx.serialization.json.Json
 import java.lang.Thread.sleep
 
 object BalldontileInfoService {
-    private const val API = "https://www.balldontlie.io/api/v1"
+    private const val API = "http://www.balldontlie.io/api/v1"
     private val format = Json { ignoreUnknownKeys = true }
     private val playersImageIds = fetchPlayerIds()
 
