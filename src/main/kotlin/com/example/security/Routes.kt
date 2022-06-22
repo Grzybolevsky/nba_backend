@@ -79,7 +79,7 @@ fun Route.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient
     get("/auth/logout") {
         if (call.sessions.get<UserSession>() != null) {
             call.sessions.clear<UserSession>()
-            call.respond(HttpStatusCode.OK)
+            call.respondRedirect("http://localhost:3000/favorites")
         } else {
             call.respond(HttpStatusCode.Forbidden)
         }
