@@ -98,6 +98,6 @@ tasks.register<Exec>("runDocker") {
     commandLine("docker", "run", "${project.name}:${project.version}")
 }
 
-tasks {
-    create("stage").dependsOn("installDist")
+tasks.create("stage") {
+    dependsOn("installDist")
 }
