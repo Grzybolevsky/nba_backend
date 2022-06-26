@@ -23,6 +23,13 @@ RUN jdeps --ignore-missing-deps \
 
 FROM ubuntu:latest AS RUNNER
 
+RUN apt update && apt upgrade -y && apt install -y gnupg curl wget unzip
+ENV TZ=Europe/Warsaw
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 COPY --from=BUILDER /out /app
 
 EXPOSE 8080

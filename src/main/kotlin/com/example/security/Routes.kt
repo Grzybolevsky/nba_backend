@@ -30,13 +30,13 @@ fun Route.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient
 
     authenticate("auth-oauth-google") {
         get(AUTH_URL) {
-            call.respondRedirect("$API_URL/auth/info")
+            call.respondRedirect("http://localhost:3000/favorites")
         }
 
         get("/callback") {
             val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
             call.sessions.set(UserSession(principal?.accessToken.toString(), 0))
-            call.respondRedirect("$API_URL/auth/hello")
+            call.respondRedirect("http://localhost:3000/favorites")
         }
     }
 
@@ -79,7 +79,7 @@ fun Route.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient
     get("/auth/logout") {
         if (call.sessions.get<UserSession>() != null) {
             call.sessions.clear<UserSession>()
-            call.respond(HttpStatusCode.OK)
+            call.respondRedirect("http://localhost:3000/favorites")
         } else {
             call.respond(HttpStatusCode.Forbidden)
         }

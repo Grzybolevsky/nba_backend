@@ -27,6 +27,7 @@ fun Application.configureSessions() {
         cookie<UserSession>("user_session", directorySessionStorage(File("build/.sessions"))) {
             cookie.path = "/"
             cookie.maxAgeInSeconds = 3600
+            cookie.httpOnly = false
             transform(SessionTransportTransformerEncrypt(hex(secretEncryptKey), hex(secretSignKey)))
         }
     }

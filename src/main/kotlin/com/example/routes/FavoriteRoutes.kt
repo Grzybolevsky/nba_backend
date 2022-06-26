@@ -29,7 +29,7 @@ fun Route.favoritePlayers() {
                     call.respond(HttpStatusCode.Forbidden)
                 }
                 else -> {
-                    call.respond(HttpStatusCode.OK, service.getFavoritePlayers(userSession.id.hashCode()))
+                    call.respond(HttpStatusCode.OK, service.getFavoritePlayers(userSession.id))
                 }
             }
         }
@@ -44,7 +44,7 @@ fun Route.favoritePlayers() {
                         MISSING_ID,
                         status = HttpStatusCode.BadRequest
                     )
-                    call.respond(HttpStatusCode.OK, service.addFavoritePlayer(userSession.id.hashCode(), id.toInt()))
+                    call.respond(HttpStatusCode.OK, service.addFavoritePlayer(userSession.id, id.toInt()))
                 }
             }
         }
@@ -59,7 +59,7 @@ fun Route.favoritePlayers() {
                         MISSING_ID,
                         status = HttpStatusCode.BadRequest
                     )
-                    call.respond(HttpStatusCode.OK, service.deleteFavoritePlayer(userSession.id.hashCode(), id.toInt()))
+                    call.respond(HttpStatusCode.OK, service.deleteFavoritePlayer(userSession.id, id.toInt()))
                 }
             }
         }
@@ -74,7 +74,7 @@ fun Route.favoriteTeams() {
                     call.respond(HttpStatusCode.Forbidden)
                 }
                 else -> {
-                    call.respond(HttpStatusCode.OK, service.getFavoriteTeams(userSession.id.hashCode()))
+                    call.respond(HttpStatusCode.OK, service.getFavoriteTeams(userSession.id))
                 }
             }
         }
@@ -89,7 +89,7 @@ fun Route.favoriteTeams() {
                         MISSING_ID,
                         status = HttpStatusCode.BadRequest
                     )
-                    call.respond(HttpStatusCode.OK, service.addFavoriteTeam(userSession.id.hashCode(), id.toInt()))
+                    call.respond(HttpStatusCode.OK, service.addFavoriteTeam(userSession.id, id.toInt()))
                 }
             }
         }
@@ -104,7 +104,7 @@ fun Route.favoriteTeams() {
                         MISSING_ID,
                         status = HttpStatusCode.BadRequest
                     )
-                    call.respond(HttpStatusCode.OK, service.deleteFavoriteTeam(userSession.id.hashCode(), id.toInt()))
+                    call.respond(HttpStatusCode.OK, service.deleteFavoriteTeam(userSession.id, id.toInt()))
                 }
             }
         }
