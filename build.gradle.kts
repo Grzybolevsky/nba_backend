@@ -63,7 +63,7 @@ application {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = javaVersion
+        jvmTarget = "1.8"
     }
 }
 
@@ -96,4 +96,8 @@ tasks.register<Exec>("runDocker") {
     dependsOn("buildDocker")
     workingDir("$projectDir")
     commandLine("docker", "run", "${project.name}:${project.version}")
+}
+
+tasks {
+    create("stage").dependsOn("installDist")
 }
