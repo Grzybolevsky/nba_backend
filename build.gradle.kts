@@ -9,7 +9,6 @@ val javaVersion: String by project
 
 plugins {
     application
-    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     kotlin("jvm") version "1.7.0"
     kotlin("plugin.serialization") version "1.7.0"
 }
@@ -97,12 +96,4 @@ tasks.register<Exec>("runDocker") {
     dependsOn("buildDocker")
     workingDir("$projectDir")
     commandLine("docker", "run", "${project.name}:${project.version}")
-}
-
-tasks.compileKotlin {
-    dependsOn(tasks.named("ktlintFormat"))
-}
-
-tasks.clean {
-    dependsOn(tasks.named("ktlintFormat"))
 }
