@@ -38,11 +38,4 @@ fun Application.module() {
     configureRouting()
     configureSecurity()
     configureSerialization()
-    routing {
-        route("/test") {
-            get {
-                call.respond("Hello world!")
-            }
-        }
-    }
 }
