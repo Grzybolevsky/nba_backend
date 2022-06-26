@@ -58,7 +58,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.example.ApplicationKt")
+    mainClass.set("io.ktor.server.netty.EngineMain")
 }
 
 tasks.withType<KotlinCompile> {
