@@ -30,13 +30,13 @@ fun Route.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient
 
     authenticate("auth-oauth-google") {
         get(AUTH_URL) {
-            call.respondRedirect("http://localhost:3000/favorites")
+            call.respondRedirect("https://nba-heroku-ui.herokuapp.com/favorites")
         }
 
         get("/callback") {
             val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
             call.sessions.set(UserSession(principal?.accessToken.toString(), 0))
-            call.respondRedirect("http://localhost:3000/favorites")
+            call.respondRedirect("https://nba-heroku-ui.herokuapp.com/favorites")
         }
     }
 
