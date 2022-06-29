@@ -30,13 +30,13 @@ fun Route.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient
 
     authenticate("auth-oauth-google") {
         get(AUTH_URL) {
-            call.respondRedirect("https://nba-heroku-ui.herokuapp.com/favorites?logged=true")
+            call.respondRedirect("https://nba-nginx.herokuapp.com/favorites")
         }
 
         get("/callback") {
             val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
             call.sessions.set(UserSession(principal?.accessToken.toString(), 0))
-            call.respondRedirect("https://nba-heroku-ui.herokuapp.com/favorites?logged=true")
+            call.respondRedirect("https://nba-nginx.herokuapp.com/favorites")
         }
     }
 
@@ -79,7 +79,7 @@ fun Route.configureSecurityRoutes(httpClient: HttpClient = applicationHttpClient
     get("/auth/logout") {
         if (call.sessions.get<UserSession>() != null) {
             call.sessions.clear<UserSession>()
-            call.respondRedirect("http://localhost:3000/favorites")
+            call.respondRedirect("https://nba-nginx.herokuapp.com/favorites")
         } else {
             call.respond(HttpStatusCode.Forbidden)
         }
