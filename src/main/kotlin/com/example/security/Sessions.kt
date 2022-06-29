@@ -28,6 +28,7 @@ fun Application.configureSessions() {
             cookie.path = "/"
             cookie.maxAgeInSeconds = 3600
             cookie.httpOnly = false
+            cookie.domain = ".herokuapp.com"
             transform(SessionTransportTransformerEncrypt(hex(secretEncryptKey), hex(secretSignKey)))
         }
     }
