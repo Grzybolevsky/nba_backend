@@ -23,7 +23,7 @@ jobs:
           distribution: "temurin"
           cache: "gradle"
       - name: Build Docker Image with Gradle
-        uses: gradle/gradle-build-action@v2.1.7
+        uses: gradle/gradle-build-action@v2.4.2
         with:
           arguments: buildDocker
           gradle-version: 7.4.2
